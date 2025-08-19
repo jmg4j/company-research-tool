@@ -486,13 +486,13 @@
                             ⚡ <span style="margin-left: 8px;">Quick Actions</span>
                         </h4>
                         <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <button onclick="window.companyResearcher.selectAllFields()" class="quick-btn" style="background: #4f46e5;">
+                            <button onclick="selectAllFields()" class="quick-btn" style="background: #4f46e5;">
                                 ✅ Select All Fields
                             </button>
-                            <button onclick="window.companyResearcher.selectEssentialFields()" class="quick-btn" style="background: #10b981;">
+                            <button onclick="selectEssentialFields()" class="quick-btn" style="background: #10b981;">
                                 🎯 Essential Fields Only
                             </button>
-                            <button onclick="window.companyResearcher.selectCultureFields()" class="quick-btn" style="background: #f59e0b;">
+                            <button onclick="selectCultureFields()" class="quick-btn" style="background: #f59e0b;">
                                 🎨 Culture Focus
                             </button>
                         </div>
@@ -541,6 +541,59 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
+        // Global functions for quick actions
+        function selectAllFields() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"][id^="include_"]');
+            checkboxes.forEach(checkbox => {
+                if (!checkbox.disabled) {
+                    checkbox.checked = true;
+                }
+            });
+        }
+
+        function selectEssentialFields() {
+            // First uncheck all
+            const checkboxes = document.querySelectorAll('input[type="checkbox"][id^="include_"]');
+            checkboxes.forEach(checkbox => {
+                if (!checkbox.disabled) {
+                    checkbox.checked = false;
+                }
+            });
+
+            // Then check essential ones
+            const essentialFields = [
+                'company_name', 'company_type', 'location', 'region',
+                'total_headcount', 'revenue', 'glassdoor_rating', 'data_quality'
+            ];
+            
+            essentialFields.forEach(field => {
+                const checkbox = document.getElementById(`include_${field}`);
+                if (checkbox) checkbox.checked = true;
+            });
+        }
+
+        function selectCultureFields() {
+            // First uncheck all
+            const checkboxes = document.querySelectorAll('input[type="checkbox"][id^="include_"]');
+            checkboxes.forEach(checkbox => {
+                if (!checkbox.disabled) {
+                    checkbox.checked = false;
+                }
+            });
+
+            // Then check culture-focused ones
+            const cultureFields = [
+                'company_name', 'company_type', 'location', 'glassdoor_rating',
+                'culture_signals', 'learning_programs', 'awards_recognition',
+                'manager_coaching', 'research_summary'
+            ];
+            
+            cultureFields.forEach(field => {
+                const checkbox = document.getElementById(`include_${field}`);
+                if (checkbox) checkbox.checked = true;
+            });
+        }
+
         class CompanyResearcher {
             constructor() {
                 this.companies = [];
@@ -550,14 +603,25 @@
             }
 
             initializeEventListeners() {
-                document.getElementById('fileInput').addEventListener('change', this.handleFileSelect.bind(this));
-                document.getElementById('processBtn').addEventListener('click', this.startResearch.bind(this));
-                
-                // Drag and drop
+                const fileInput = document.getElementById('fileInput');
+                const processBtn = document.getElementById('processBtn');
                 const uploadSection = document.getElementById('uploadSection');
+                
+                // File input change event
+                fileInput.addEventListener('change', this.handleFileSelect.bind(this));
+                
+                // Process button click event  
+                processBtn.addEventListener('click', this.startResearch.bind(this));
+                
+                // Drag and drop events
                 uploadSection.addEventListener('dragover', this.handleDragOver.bind(this));
                 uploadSection.addEventListener('drop', this.handleDrop.bind(this));
                 uploadSection.addEventListener('dragleave', this.handleDragLeave.bind(this));
+                
+                // Upload section click to trigger file input
+                uploadSection.addEventListener('click', () => {
+                    fileInput.click();
+                });
             }
 
             handleDragOver(e) {
