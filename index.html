@@ -674,15 +674,22 @@
             }
 
             async parseFile(file) {
+                console.log('Parsing file:', file.name, file.type);
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
                     
                     reader.onload = (e) => {
+                        console.log('File read successfully, processing data...');
                         try {
                             const data = new Uint8Array(e.target.result);
+                            console.log('Data length:', data.length);
+                            
                             const workbook = XLSX.read(data, { type: 'array' });
+                            console.log('Workbook created, sheets:', workbook.SheetNames);
+                            
                             const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                             const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                            console.log('Raw JSON data:', jsonData);
                             
                             const companies = jsonData
                                 .slice(1) // Skip header
@@ -690,13 +697,20 @@
                                 .filter(company => company && typeof company === 'string')
                                 .map(company => company.trim());
                             
+                            console.log('Extracted companies:', companies);
                             resolve(companies);
                         } catch (error) {
+                            console.error('Error parsing file data:', error);
                             reject(error);
                         }
                     };
                     
-                    reader.onerror = () => reject(new Error('Failed to read file'));
+                    reader.onerror = () => {
+                        console.error('FileReader error');
+                        reject(new Error('Failed to read file'));
+                    };
+                    
+                    console.log('Starting to read file...');
                     reader.readAsArrayBuffer(file);
                 });
             }
