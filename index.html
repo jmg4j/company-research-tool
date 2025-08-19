@@ -644,15 +644,22 @@
             }
 
             handleFileSelect(e) {
+                console.log('File select triggered', e);
                 const file = e.target.files[0];
+                console.log('Selected file:', file);
                 if (file) {
+                    console.log('Processing file:', file.name, file.size, file.type);
                     this.processFile(file);
+                } else {
+                    console.log('No file selected');
                 }
             }
 
             async processFile(file) {
+                console.log('Starting to process file:', file.name);
                 try {
                     const companies = await this.parseFile(file);
+                    console.log('Parsed companies:', companies);
                     
                     if (companies.length > 20) {
                         this.showStatus('error', '❌ Too many companies! Please limit to 20 companies per batch.');
@@ -669,6 +676,7 @@
                     
                     this.validateForm();
                 } catch (error) {
+                    console.error('Error processing file:', error);
                     this.showStatus('error', `❌ Error reading file: ${error.message}`);
                 }
             }
@@ -804,7 +812,7 @@ Large companies have MORE data available, not less - find it!`;
 CRITICAL INSTRUCTIONS:
 - You MUST use web search for every company research request
 - You have full access to web search - USE IT extensively  
-- ACTUALLY search Glassdoor, LinkedIn, company websites, etc.
+- ACTUALLY search Glassdoor,LinkedIn, company websites, etc.
 - Every data point must come from a real web search result
 
 ${searchInstructions}
@@ -868,8 +876,177 @@ Return ONLY the JSON object.`;
             }
 
             validateAndCleanData(data, companyName) {
-                // Ensure all required fields exist with reasonable defaults
                 const cleanData = {
                     company_name: data.company_name || companyName,
                     location: data.location || 'Unknown',
-                    company_type: data.company_type ||
+                    company_type: data.company_type || 'Unknown',
+                    region: this.mapLocationToRegion(data.location),
+                    total_headcount: Math.max(1, parseInt(data.total_headcount) || 1),
+                    us_headcount: Math.max(1, parseInt(data.us_headcount) || 1),
+                    revenue: Math.max(1, parseInt(data.revenue) || 1),
+                    employee_growth_3yr: parseFloat(data.employee_growth_3yr) || 0,
+                    median_manager_salary: Math.max(40, parseInt(data.median_manager_salary) || 80),
+                    glassdoor_rating: Math.max(1, Math.min(5, parseFloat(data.glassdoor_rating) || 3)),
+                    culture_signals: Math.max(1, Math.min(5, parseInt(data.culture_signals) || 3)),
+                    learning_programs: Math.max(1, Math.min(5, parseInt(data.learning_programs) || 3)),
+                    awards_recognition: Math.max(1, Math.min(5, parseInt(data.awards_recognition) || 3)),
+                    manager_coaching: Math.max(1, Math.min(5, parseInt(data.manager_coaching) || 3)),
+                    research_summary: data.research_summary || 'Basic research completed',
+                    sources_found: Math.max(0, parseInt(data.sources_found) || 0),
+                    data_quality: data.data_quality || 'Medium'
+                };
+                return cleanData;
+            }
+
+            mapLocationToRegion(location) {
+                const regionMapping = {
+                    "East": ["CT", "DE", "ME", "MA", "NH", "NJ", "NY", "VT"],
+                    "Midwest": ["IL", "IN", "IA", "KS", "KY", "MI", "MN", "MO", "NE", "ND", "OH", "SD", "WI"],
+                    "West": ["AZ", "CA", "CO", "HI", "ID", "MT", "NV", "NM", "OR", "UT", "WA", "WY"],
+                    "Southern": ["AL", "AR", "DC", "FL", "GA", "LA", "MD", "MS", "NC", "OK", "SC", "TN", "TX", "VA", "WV"]
+                };
+
+                if (!location || location === 'Unknown') return 'Unknown';
+
+                for (const [region, states] of Object.entries(regionMapping)) {
+                    if (states.some(state => location.includes(state))) {
+                        return region;
+                    }
+                }
+
+                return location.toLowerCase().includes('international') ? 'International' : 'Unknown';
+            }
+
+            createErrorResult(companyName, errorMsg) {
+                return {
+                    company_name: companyName,
+                    location: 'Unknown',
+                    company_type: 'Unknown',
+                    region: 'Unknown',
+                    total_headcount: 1,
+                    us_headcount: 1,
+                    revenue: 1,
+                    employee_growth_3yr: 0,
+                    median_manager_salary: 80,
+                    glassdoor_rating: 3,
+                    culture_signals: 3,
+                    learning_programs: 3,
+                    awards_recognition: 3,
+                    manager_coaching: 3,
+                    research_summary: `Research failed: ${errorMsg}`,
+                    sources_found: 0,
+                    data_quality: 'Low'
+                };
+            }
+
+            updateProgress(current, total, statusText) {
+                const progress = ((current + 1) / total) * 100;
+                document.getElementById('progressFill').style.width = `${progress}%`;
+                document.getElementById('statusText').textContent = `${statusText} (${current + 1}/${total})`;
+            }
+
+            completeResearch() {
+                this.isProcessing = false;
+                document.getElementById('processBtn').disabled = false;
+                
+                this.showStatus('success', '✅ Research completed successfully!');
+                
+                const csv = this.generateCSV();
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                
+                const customFileName = document.getElementById('outputFileName').value.trim();
+                const baseFileName = customFileName || 'research_results';
+                const dateStamp = new Date().toISOString().split('T')[0];
+                const finalFileName = `${baseFileName}_${dateStamp}.csv`;
+                
+                const downloadBtn = document.getElementById('downloadBtn');
+                downloadBtn.href = url;
+                downloadBtn.download = finalFileName;
+                downloadBtn.innerHTML = `📥 Download ${finalFileName}`;
+                
+                document.getElementById('resultsSection').style.display = 'block';
+            }
+
+            generateCSV() {
+                const selectedFields = this.getSelectedFields();
+                
+                const fieldMapping = {
+                    'company_name': 'Company Name',
+                    'company_type': 'Company Type',
+                    'location': 'Location',
+                    'region': 'Region',
+                    'total_headcount': 'Total Headcount',
+                    'us_headcount': 'US Headcount',
+                    'revenue': 'Revenue',
+                    'employee_growth_3yr': 'Employee Growth 3yr',
+                    'median_manager_salary': 'Median Manager Salary',
+                    'glassdoor_rating': 'Glassdoor Rating',
+                    'culture_signals': 'Culture Signals',
+                    'learning_programs': 'Learning Programs',
+                    'awards_recognition': 'Awards Recognition',
+                    'manager_coaching': 'Manager Coaching',
+                    'research_summary': 'Research Summary',
+                    'data_quality': 'Data Quality',
+                    'sources_found': 'Sources Found'
+                };
+
+                const headers = selectedFields.map(field => fieldMapping[field]);
+                const rows = this.results.map(result => {
+                    return selectedFields.map(field => {
+                        const value = result[field];
+                        if (field === 'research_summary' && typeof value === 'string') {
+                            return `"${value.replace(/"/g, '""')}"`;
+                        }
+                        return value;
+                    });
+                });
+
+                return [headers, ...rows].map(row => row.join(',')).join('\n');
+            }
+
+            getSelectedFields() {
+                const fieldIds = [
+                    'company_name', 'company_type', 'location', 'region',
+                    'total_headcount', 'us_headcount', 'revenue', 'employee_growth_3yr',
+                    'median_manager_salary', 'glassdoor_rating', 'culture_signals',
+                    'learning_programs', 'awards_recognition', 'manager_coaching',
+                    'research_summary', 'data_quality', 'sources_found'
+                ];
+
+                return fieldIds.filter(fieldId => {
+                    const checkbox = document.getElementById(`include_${fieldId}`);
+                    return checkbox && checkbox.checked;
+                });
+            }
+
+            showStatus(type, message) {
+                const status = document.getElementById('status');
+                status.className = `status ${type}`;
+                status.style.display = 'block';
+                document.getElementById('statusText').textContent = message;
+                
+                if (type !== 'processing') {
+                    document.getElementById('progressFill').style.width = '100%';
+                }
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, initializing...');
+            
+            if (typeof XLSX === 'undefined') {
+                console.error('XLSX library not loaded!');
+                alert('Error: XLSX library failed to load. Please refresh the page.');
+                return;
+            } else {
+                console.log('XLSX library loaded successfully');
+            }
+            
+            window.companyResearcher = new CompanyResearcher();
+            console.log('CompanyResearcher initialized');
+        });
+    </script>
+</body>
+</html>
