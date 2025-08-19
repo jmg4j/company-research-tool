@@ -260,8 +260,50 @@
             margin-bottom: 8px;
         }
 
+        .output-config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .config-section {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .field-checkbox {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            color: #4b5563;
+        }
+
+        .field-checkbox input {
+            margin-right: 8px;
+        }
+
+        .quick-btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .quick-btn:hover {
+            background: #3730a3;
+            transform: translateY(-1px);
+        }
+
         @media (max-width: 768px) {
-            .form-grid {
+            .form-grid, .output-config-grid {
                 grid-template-columns: 1fr;
             }
             
@@ -289,21 +331,7 @@
         <div class="main-content">
             <div class="warning">
                 <strong>⚠️ Important Limits:</strong>
-                Please upload maximum 20 companies at a time. Each research costs approximately $0.10-0.20 per company. You'll need a Perplexity API key to use this tool.
-            </div>
-
-            <div class="section">
-                <h2>🔧 API Configuration</h2>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="apiKey">Perplexity API Key *</label>
-                        <input type="password" id="apiKey" placeholder="Enter your Perplexity API key" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="requestDelay">Request Delay (seconds)</label>
-                        <input type="number" id="requestDelay" value="3" min="1" max="10">
-                    </div>
-                </div>
+                Please upload maximum 20 companies at a time. Each research costs approximately $0.10-0.20 per company. API costs are covered by the site - just use responsibly!
             </div>
 
             <div class="section">
@@ -319,6 +347,11 @@
                         <small style="color: #6b7280; margin-top: 4px;">More searches = better data but higher cost (~$0.05-0.30 per company)</small>
                     </div>
                     <div class="form-group">
+                        <label for="requestDelay">Request Delay (seconds)</label>
+                        <input type="number" id="requestDelay" value="3" min="1" max="10">
+                        <small style="color: #6b7280; margin-top: 4px;">Delay between API requests to avoid rate limits</small>
+                    </div>
+                    <div class="form-group">
                         <label for="outputFileName">Output File Name</label>
                         <input type="text" id="outputFileName" placeholder="research_results" value="research_results">
                         <small style="color: #6b7280; margin-top: 4px;">File will be saved as: [your-name]_YYYY-MM-DD.csv</small>
@@ -332,134 +365,134 @@
                     The AI will research all these data points for each company. Check the boxes for fields you want included in your output CSV:
                 </p>
                 
-                <div class="output-config-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px;">
+                <div class="output-config-grid">
                     
                     <!-- Basic Company Info -->
-                    <div class="config-section" style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 20px;">
+                    <div class="config-section">
                         <h4 style="color: #1f2937; margin-bottom: 15px; font-weight: 600; display: flex; align-items: center;">
                             🏢 <span style="margin-left: 8px;">Basic Company Information</span>
                         </h4>
                         <div class="field-options">
-                            <label class="field-checkbox" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
-                                <input type="checkbox" id="include_company_name" checked disabled style="margin-right: 8px;">
+                            <label class="field-checkbox">
+                                <input type="checkbox" id="include_company_name" checked disabled>
                                 <span><strong>Company Name</strong> - Company name (always included)</span>
                             </label>
-                            <label class="field-checkbox" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
-                                <input type="checkbox" id="include_company_type" checked style="margin-right: 8px;">
+                            <label class="field-checkbox">
+                                <input type="checkbox" id="include_company_type" checked>
                                 <span><strong>Company Type</strong> - Public, Private, Startup, Nonprofit, Unknown</span>
                             </label>
-                            <label class="field-checkbox" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
-                                <input type="checkbox" id="include_location" checked style="margin-right: 8px;">
+                            <label class="field-checkbox">
+                                <input type="checkbox" id="include_location" checked>
                                 <span><strong>Location</strong> - US headquarters state</span>
                             </label>
-                            <label class="field-checkbox" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
-                                <input type="checkbox" id="include_region" checked style="margin-right: 8px;">
+                            <label class="field-checkbox">
+                                <input type="checkbox" id="include_region" checked>
                                 <span><strong>Region</strong> - East, Midwest, West, Southern, International</span>
                             </label>
                         </div>
                     </div>
 
                     <!-- Employee Metrics -->
-                    <div class="config-section" style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 20px;">
+                    <div class="config-section">
                         <h4 style="color: #1f2937; margin-bottom: 15px; font-weight: 600; display: flex; align-items: center;">
                             👥 <span style="margin-left: 8px;">Employee Metrics</span>
                         </h4>
                         <div class="field-options">
-                            <label class="field-checkbox" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
-                                <input type="checkbox" id="include_total_headcount" checked style="margin-right: 8px;">
+                            <label class="field-checkbox">
+                                <input type="checkbox" id="include_total_headcount" checked>
                                 <span><strong>Total Headcount</strong> - Global employee count</span>
                             </label>
-                            <label class="field-checkbox" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
-                                <input type="checkbox" id="include_us_headcount" checked style="margin-right: 8px;">
+                            <label class="field-checkbox">
+                                <input type="checkbox" id="include_us_headcount" checked>
                                 <span><strong>US Headcount</strong> - US-based employee count</span>
                             </label>
-                            <label class="field-checkbox" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
-                                <input type="checkbox" id="include_employee_growth_3yr" checked style="margin-right: 8px;">
+                            <label class="field-checkbox">
+                                <input type="checkbox" id="include_employee_growth_3yr" checked>
                                 <span><strong>Employee Growth (3yr)</strong> - Annual growth rate percentage</span>
                             </label>
-                            <label class="field-checkbox" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
-                                <input type="checkbox" id="include_median_manager_salary" style="margin-right: 8px;">
+                            <label class="field-checkbox">
+                                <input type="checkbox" id="include_median_manager_salary">
                                 <span><strong>Median Manager Salary</strong> - US manager salary in thousands</span>
                             </label>
                         </div>
                     </div>
 
                     <!-- Financial Data -->
-                    <div class="config-section" style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 20px;">
+                    <div class="config-section">
                         <h4 style="color: #1f2937; margin-bottom: 15px; font-weight: 600; display: flex; align-items: center;">
                             💰 <span style="margin-left: 8px;">Financial Data</span>
                         </h4>
                         <div class="field-options">
-                            <label class="field-checkbox" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
-                                <input type="checkbox" id="include_revenue" checked style="margin-right: 8px;">
+                            <label class="field-checkbox">
+                                <input type="checkbox" id="include_revenue" checked>
                                 <span><strong>Revenue</strong> - Annual revenue in millions USD</span>
                             </label>
                         </div>
                     </div>
 
                     <!-- Culture & Workplace -->
-                    <div class="config-section" style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 20px;">
+                    <div class="config-section">
                         <h4 style="color: #1f2937; margin-bottom: 15px; font-weight: 600; display: flex; align-items: center;">
                             🎯 <span style="margin-left: 8px;">Culture & Workplace (1-5 ratings)</span>
                         </h4>
                         <div class="field-options">
-                            <label class="field-checkbox" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
-                                <input type="checkbox" id="include_glassdoor_rating" checked style="margin-right: 8px;">
+                            <label class="field-checkbox">
+                                <input type="checkbox" id="include_glassdoor_rating" checked>
                                 <span><strong>Glassdoor Rating</strong> - Employee satisfaction (1.0-5.0)</span>
                             </label>
-                            <label class="field-checkbox" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
-                                <input type="checkbox" id="include_culture_signals" style="margin-right: 8px;">
+                            <label class="field-checkbox">
+                                <input type="checkbox" id="include_culture_signals">
                                 <span><strong>Culture Signals</strong> - Company culture strength</span>
                             </label>
-                            <label class="field-checkbox" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
-                                <input type="checkbox" id="include_learning_programs" style="margin-right: 8px;">
+                            <label class="field-checkbox">
+                                <input type="checkbox" id="include_learning_programs">
                                 <span><strong>Learning Programs</strong> - L&D and training quality</span>
                             </label>
-                            <label class="field-checkbox" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
-                                <input type="checkbox" id="include_awards_recognition" style="margin-right: 8px;">
+                            <label class="field-checkbox">
+                                <input type="checkbox" id="include_awards_recognition">
                                 <span><strong>Awards & Recognition</strong> - Industry awards and recognition</span>
                             </label>
-                            <label class="field-checkbox" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
-                                <input type="checkbox" id="include_manager_coaching" style="margin-right: 8px;">
+                            <label class="field-checkbox">
+                                <input type="checkbox" id="include_manager_coaching">
                                 <span><strong>Manager Coaching</strong> - Leadership development programs</span>
                             </label>
                         </div>
                     </div>
 
                     <!-- Research Metadata -->
-                    <div class="config-section" style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 20px;">
+                    <div class="config-section">
                         <h4 style="color: #1f2937; margin-bottom: 15px; font-weight: 600; display: flex; align-items: center;">
                             🔍 <span style="margin-left: 8px;">Research Metadata</span>
                         </h4>
                         <div class="field-options">
-                            <label class="field-checkbox" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
-                                <input type="checkbox" id="include_research_summary" checked style="margin-right: 8px;">
+                            <label class="field-checkbox">
+                                <input type="checkbox" id="include_research_summary" checked>
                                 <span><strong>Research Summary</strong> - What sources were found</span>
                             </label>
-                            <label class="field-checkbox" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
-                                <input type="checkbox" id="include_data_quality" checked style="margin-right: 8px;">
+                            <label class="field-checkbox">
+                                <input type="checkbox" id="include_data_quality" checked>
                                 <span><strong>Data Quality</strong> - High, Medium, Low confidence</span>
                             </label>
-                            <label class="field-checkbox" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
-                                <input type="checkbox" id="include_sources_found" style="margin-right: 8px;">
+                            <label class="field-checkbox">
+                                <input type="checkbox" id="include_sources_found">
                                 <span><strong>Sources Found</strong> - Number of sources used</span>
                             </label>
                         </div>
                     </div>
 
                     <!-- Quick Actions -->
-                    <div class="config-section" style="background: #eef2ff; border: 2px solid #4f46e5; border-radius: 12px; padding: 20px;">
+                    <div class="config-section" style="background: #eef2ff; border: 2px solid #4f46e5;">
                         <h4 style="color: #1f2937; margin-bottom: 15px; font-weight: 600; display: flex; align-items: center;">
                             ⚡ <span style="margin-left: 8px;">Quick Actions</span>
                         </h4>
                         <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <button onclick="window.companyResearcher.selectAllFields()" class="quick-btn" style="background: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9em;">
+                            <button onclick="window.companyResearcher.selectAllFields()" class="quick-btn" style="background: #4f46e5;">
                                 ✅ Select All Fields
                             </button>
-                            <button onclick="window.companyResearcher.selectEssentialFields()" class="quick-btn" style="background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9em;">
+                            <button onclick="window.companyResearcher.selectEssentialFields()" class="quick-btn" style="background: #10b981;">
                                 🎯 Essential Fields Only
                             </button>
-                            <button onclick="window.companyResearcher.selectCultureFields()" class="quick-btn" style="background: #f59e0b; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9em;">
+                            <button onclick="window.companyResearcher.selectCultureFields()" class="quick-btn" style="background: #f59e0b;">
                                 🎨 Culture Focus
                             </button>
                         </div>
@@ -510,7 +543,6 @@
     <script>
         class CompanyResearcher {
             constructor() {
-                this.apiKey = '';
                 this.companies = [];
                 this.results = [];
                 this.isProcessing = false;
@@ -520,7 +552,6 @@
             initializeEventListeners() {
                 document.getElementById('fileInput').addEventListener('change', this.handleFileSelect.bind(this));
                 document.getElementById('processBtn').addEventListener('click', this.startResearch.bind(this));
-                document.getElementById('apiKey').addEventListener('input', this.validateForm.bind(this));
                 
                 // Drag and drop
                 const uploadSection = document.getElementById('uploadSection');
@@ -607,11 +638,8 @@
             }
 
             validateForm() {
-                const apiKey = document.getElementById('apiKey').value.trim();
                 const hasFile = this.companies.length > 0;
-                
-                this.apiKey = apiKey;
-                document.getElementById('processBtn').disabled = !(apiKey && hasFile);
+                document.getElementById('processBtn').disabled = !hasFile;
             }
 
             async startResearch() {
@@ -663,27 +691,26 @@ IMPORTANT: If this is a large/well-known company, be EXTRA thorough in your sear
 
 Large companies have MORE data available, not less - find it!`;
 
-                const response = await fetch('https://api.perplexity.ai/chat/completions', {
+                // Use Netlify function (no API key needed - it's in environment variables)
+                const apiUrl = '/.netlify/functions/research';
+                
+                const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${this.apiKey}`,
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        model: 'sonar-reasoning-pro',
                         messages: [
                             { role: 'system', content: systemPrompt },
                             { role: 'user', content: userPrompt }
                         ],
-                        max_tokens: 4000,
-                        temperature: 0.1,
-                        return_citations: true,
-                        return_images: false
+                        model: 'sonar-reasoning-pro'
                     })
                 });
 
                 if (!response.ok) {
-                    throw new Error(`API request failed: ${response.status}`);
+                    const errorData = await response.json();
+                    throw new Error(`API request failed: ${response.status} - ${errorData.error || 'Unknown error'}`);
                 }
 
                 const data = await response.json();
@@ -744,11 +771,6 @@ Return ONLY the JSON object.`;
                 return instructions[depth] || instructions['standard'];
             }
 
-            getFocusInstructions(types, regions) {
-                // Removed since these are output classifications, not input filters
-                return '';
-            }
-
             parseApiResponse(apiData, companyName) {
                 try {
                     const content = apiData.choices[0].message.content.trim();
@@ -772,225 +794,4 @@ Return ONLY the JSON object.`;
                 const cleanData = {
                     company_name: data.company_name || companyName,
                     location: data.location || 'Unknown',
-                    company_type: data.company_type || 'Unknown',
-                    region: this.mapLocationToRegion(data.location),
-                    total_headcount: Math.max(1, parseInt(data.total_headcount) || 1),
-                    us_headcount: Math.max(1, parseInt(data.us_headcount) || 1),
-                    revenue: Math.max(1, parseInt(data.revenue) || 1),
-                    employee_growth_3yr: parseFloat(data.employee_growth_3yr) || 0,
-                    median_manager_salary: Math.max(40, parseInt(data.median_manager_salary) || 80),
-                    glassdoor_rating: Math.max(1, Math.min(5, parseFloat(data.glassdoor_rating) || 3)),
-                    culture_signals: Math.max(1, Math.min(5, parseInt(data.culture_signals) || 3)),
-                    learning_programs: Math.max(1, Math.min(5, parseInt(data.learning_programs) || 3)),
-                    awards_recognition: Math.max(1, Math.min(5, parseInt(data.awards_recognition) || 3)),
-                    manager_coaching: Math.max(1, Math.min(5, parseInt(data.manager_coaching) || 3)),
-                    research_summary: data.research_summary || 'Basic research completed',
-                    sources_found: Math.max(0, parseInt(data.sources_found) || 0),
-                    data_quality: data.data_quality || 'Medium'
-                };
-
-                return cleanData;
-            }
-
-            mapLocationToRegion(location) {
-                const regionMapping = {
-                    "East": ["CT", "DE", "ME", "MA", "NH", "NJ", "NY", "VT", "Eastern_PA"],
-                    "Midwest": ["IL", "IN", "IA", "KS", "KY", "MI", "MN", "MO", "NE", "ND", "OH", "SD", "WI", "Western_PA"],
-                    "West": ["AZ", "CA", "CO", "HI", "ID", "MT", "NV", "NM", "OR", "UT", "WA", "WY"],
-                    "Southern": ["AL", "AR", "DC", "FL", "GA", "LA", "MD", "MS", "NC", "OK", "SC", "TN", "TX", "VA", "WV"]
-                };
-
-                if (!location || location === 'Unknown') return 'Unknown';
-
-                for (const [region, states] of Object.entries(regionMapping)) {
-                    if (states.some(state => location.includes(state))) {
-                        return region;
-                    }
-                }
-
-                return location.toLowerCase().includes('international') ? 'International' : 'Unknown';
-            }
-
-            createErrorResult(companyName, errorMsg) {
-                return {
-                    company_name: companyName,
-                    location: 'Unknown',
-                    company_type: 'Unknown',
-                    region: 'Unknown',
-                    total_headcount: 1,
-                    us_headcount: 1,
-                    revenue: 1,
-                    employee_growth_3yr: 0,
-                    median_manager_salary: 80,
-                    glassdoor_rating: 3,
-                    culture_signals: 3,
-                    learning_programs: 3,
-                    awards_recognition: 3,
-                    manager_coaching: 3,
-                    research_summary: `Research failed: ${errorMsg}`,
-                    sources_found: 0,
-                    data_quality: 'Low'
-                };
-            }
-
-            updateProgress(current, total, statusText) {
-                const progress = ((current + 1) / total) * 100;
-                document.getElementById('progressFill').style.width = `${progress}%`;
-                document.getElementById('statusText').textContent = `${statusText} (${current + 1}/${total})`;
-            }
-
-            completeResearch() {
-                this.isProcessing = false;
-                document.getElementById('processBtn').disabled = false;
-                
-                this.showStatus('success', '✅ Research completed successfully!');
-                
-                // Generate and download CSV with custom filename
-                const csv = this.generateCSV();
-                const blob = new Blob([csv], { type: 'text/csv' });
-                const url = URL.createObjectURL(blob);
-                
-                // Get custom filename or use default
-                const customFileName = document.getElementById('outputFileName').value.trim();
-                const baseFileName = customFileName || 'research_results';
-                const dateStamp = new Date().toISOString().split('T')[0];
-                const finalFileName = `${baseFileName}_${dateStamp}.csv`;
-                
-                const downloadBtn = document.getElementById('downloadBtn');
-                downloadBtn.href = url;
-                downloadBtn.download = finalFileName;
-                
-                // Update download button text to show filename
-                downloadBtn.innerHTML = `📥 Download ${finalFileName}`;
-                
-                document.getElementById('resultsSection').style.display = 'block';
-            }
-
-            generateCSV() {
-                // Get selected fields
-                const selectedFields = this.getSelectedFields();
-                
-                const fieldMapping = {
-                    'company_name': 'Company Name',
-                    'company_type': 'Company Type',
-                    'location': 'Location',
-                    'region': 'Region',
-                    'total_headcount': 'Total Headcount',
-                    'us_headcount': 'US Headcount',
-                    'revenue': 'Revenue',
-                    'employee_growth_3yr': 'Employee Growth 3yr',
-                    'median_manager_salary': 'Median Manager Salary',
-                    'glassdoor_rating': 'Glassdoor Rating',
-                    'culture_signals': 'Culture Signals',
-                    'learning_programs': 'Learning Programs',
-                    'awards_recognition': 'Awards Recognition',
-                    'manager_coaching': 'Manager Coaching',
-                    'research_summary': 'Research Summary',
-                    'data_quality': 'Data Quality',
-                    'sources_found': 'Sources Found'
-                };
-
-                // Build headers based on selected fields
-                const headers = selectedFields.map(field => fieldMapping[field]);
-
-                // Build rows based on selected fields
-                const rows = this.results.map(result => {
-                    return selectedFields.map(field => {
-                        const value = result[field];
-                        // Handle research summary quotes
-                        if (field === 'research_summary' && typeof value === 'string') {
-                            return `"${value.replace(/"/g, '""')}"`;
-                        }
-                        return value;
-                    });
-                });
-
-                return [headers, ...rows].map(row => row.join(',')).join('\n');
-            }
-
-            getSelectedFields() {
-                const fieldIds = [
-                    'company_name', 'company_type', 'location', 'region',
-                    'total_headcount', 'us_headcount', 'revenue', 'employee_growth_3yr',
-                    'median_manager_salary', 'glassdoor_rating', 'culture_signals',
-                    'learning_programs', 'awards_recognition', 'manager_coaching',
-                    'research_summary', 'data_quality', 'sources_found'
-                ];
-
-                return fieldIds.filter(fieldId => {
-                    const checkbox = document.getElementById(`include_${fieldId}`);
-                    return checkbox && checkbox.checked;
-                });
-            }
-
-            selectAllFields() {
-                const checkboxes = document.querySelectorAll('input[type="checkbox"][id^="include_"]');
-                checkboxes.forEach(checkbox => {
-                    if (!checkbox.disabled) {
-                        checkbox.checked = true;
-                    }
-                });
-            }
-
-            selectEssentialFields() {
-                // First uncheck all
-                const checkboxes = document.querySelectorAll('input[type="checkbox"][id^="include_"]');
-                checkboxes.forEach(checkbox => {
-                    if (!checkbox.disabled) {
-                        checkbox.checked = false;
-                    }
-                });
-
-                // Then check essential ones
-                const essentialFields = [
-                    'company_name', 'company_type', 'location', 'region',
-                    'total_headcount', 'revenue', 'glassdoor_rating', 'data_quality'
-                ];
-                
-                essentialFields.forEach(field => {
-                    const checkbox = document.getElementById(`include_${field}`);
-                    if (checkbox) checkbox.checked = true;
-                });
-            }
-
-            selectCultureFields() {
-                // First uncheck all
-                const checkboxes = document.querySelectorAll('input[type="checkbox"][id^="include_"]');
-                checkboxes.forEach(checkbox => {
-                    if (!checkbox.disabled) {
-                        checkbox.checked = false;
-                    }
-                });
-
-                // Then check culture-focused ones
-                const cultureFields = [
-                    'company_name', 'company_type', 'location', 'glassdoor_rating',
-                    'culture_signals', 'learning_programs', 'awards_recognition',
-                    'manager_coaching', 'research_summary'
-                ];
-                
-                cultureFields.forEach(field => {
-                    const checkbox = document.getElementById(`include_${field}`);
-                    if (checkbox) checkbox.checked = true;
-                });
-            }
-
-            showStatus(type, message) {
-                const status = document.getElementById('status');
-                status.className = `status ${type}`;
-                status.style.display = 'block';
-                document.getElementById('statusText').textContent = message;
-                
-                if (type !== 'processing') {
-                    document.getElementById('progressFill').style.width = '100%';
-                }
-            }
-        }
-
-        // Initialize the application
-        document.addEventListener('DOMContentLoaded', () => {
-            window.companyResearcher = new CompanyResearcher();
-        });
-    </script>
-</body>
-</html>
+                    company_type: data.company_type ||
