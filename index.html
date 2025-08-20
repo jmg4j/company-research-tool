@@ -492,7 +492,7 @@ EMPLOYEE GROWTH FOCUS: Calculate 3-year ANNUAL employee growth rate, not total g
 
 IMPORTANT: If this is a large/well-known company, be EXTRA thorough in your searches. Large companies have MORE data available, not less - find it!`;
 
-                const response = await fetch('/.netlify/functions/research', {
+                const response = await fetch('/api/research', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
