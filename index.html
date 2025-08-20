@@ -66,8 +66,8 @@
             <div style="background: #dbeafe; border: 2px solid #3b82f6; color: #1e40af; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
                 <strong>📖 How to Use:</strong>
                 <ul style="margin-top: 8px; margin-left: 20px; line-height: 1.6;">
-                    <li>Upload a CSV or Excel file with company names in the first column</li>
-                    <li>Select which data points you want to research from the options below</li>
+                    <li>First, upload a CSV or Excel file with company names in the first column</li>
+                    <li>Then select which data points you want to research from the options below</li>
                     <li>Click "Start Research" to automatically gather competitive intelligence</li>
                     <li>AI will search Glassdoor, LinkedIn, company websites and more for each company</li>
                     <li>Results download as a CSV file ready for analysis</li>
@@ -84,7 +84,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="section">
                 <h2>📊 Data Output Configuration</h2>
                 <p style="color: #6b7280; margin-bottom: 20px; font-style: italic;">
@@ -106,6 +105,14 @@
                             <label style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer; font-size: 0.9em; color: #4b5563;">
                                 <input type="checkbox" id="include_company_type" checked style="margin-right: 8px;">
                                 <span><strong>Company Type</strong> - Public, Private, Startup, Nonprofit, Unknown</span>
+                            </label>
+                            <label style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer; font-size: 0.9em; color: #4b5563;">
+                                <input type="checkbox" id="include_industry" checked style="margin-right: 8px;">
+                                <span><strong>Industry</strong> - Company's primary industry sector</span>
+                            </label>
+                            <label style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer; font-size: 0.9em; color: #4b5563;">
+                                <input type="checkbox" id="include_growth_stage" checked style="margin-right: 8px;">
+                                <span><strong>Growth Stage</strong> - Early, Growth, Mature, or Decline</span>
                             </label>
                             <label style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer; font-size: 0.9em; color: #4b5563;">
                                 <input type="checkbox" id="include_location" checked style="margin-right: 8px;">
@@ -227,7 +234,6 @@
                             </button>
                         </div>
                     </div>
-            
                 </div>
             </div>
 
@@ -253,18 +259,20 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
     <script>
-function selectAllFields() {
+        function selectAllFields() {
             document.querySelectorAll('input[type="checkbox"][id^="include_"]:not([disabled])').forEach(cb => cb.checked = true);
         }
 
         function selectEssentialFields() {
             document.querySelectorAll('input[type="checkbox"][id^="include_"]:not([disabled])').forEach(cb => cb.checked = false);
-            ['company_name', 'company_type', 'location', 'revenue', 'glassdoor_rating'].forEach(field => {
+            ['company_name', 'company_type', 'industry', 'growth_stage', 'location', 'revenue', 'glassdoor_rating'].forEach(field => {
                 const checkbox = document.getElementById(`include_${field}`);
                 if (checkbox) checkbox.checked = true;
             });
         }
+
         function selectCultureFields() {
             document.querySelectorAll('input[type="checkbox"][id^="include_"]:not([disabled])').forEach(cb => cb.checked = false);
             ['company_name', 'glassdoor_rating', 'culture_signals', 'learning_programs', 'awards_recognition', 'manager_coaching', 'data_quality'].forEach(field => {
@@ -272,6 +280,7 @@ function selectAllFields() {
                 if (checkbox) checkbox.checked = true;
             });
         }
+
         class CompanyResearcher {
             constructor() {
                 this.companies = [];
@@ -358,44 +367,130 @@ function selectAllFields() {
             }
 
             async researchCompany(companyName) {
-const systemPrompt = `You are a competitive intelligence analyst. Research companies using web search.
+                const systemPrompt = `You are a competitive intelligence analyst researching companies using web search.
 
-        CRITICAL INSTRUCTIONS:
-        1. You MUST use web_search tool multiple times for EACH company
-        2. Search for: "${companyName} employees", "${companyName} revenue", "${companyName} glassdoor"
-        3. Use web_fetch to get detailed info from company websites
-        4. NEVER return -1 or "Unknown" - always provide reasonable estimates
-        
-        For ratings (1-5 scale):
-        - culture_signals: Based on employee reviews and company initiatives
-        - learning_programs: Based on L&D mentions, training programs
-        - awards_recognition: Based on industry awards, best workplace lists
-        - manager_coaching: Based on leadership development programs
-            
-            Return JSON with this EXACT structure:
-            {
-              "company_name": "string",
-              "location": "US state only",
-              "company_type": "Public|Private|Startup|Nonprofit|Unknown",
-              "region": "East|Midwest|West|Southern|International|Unknown",
-              "total_headcount": integer,
-              "us_headcount": integer,
-              "revenue": integer,
-              "revenue_growth_3yr": number,
-              "employee_growth_3yr": number,
-              "median_manager_salary": integer,
-              "glassdoor_rating": number,
-              "culture_signals": number,
-              "learning_programs": number,
-              "awards_recognition": number,
-              "manager_coaching": number,
-              "research_summary": "what you found and sources",
-              "sources_found": integer,
-              "data_quality": "High|Medium|Low"
-            }`;
-                const userPrompt = `Research this company: ${companyName}
+CRITICAL INSTRUCTIONS:
+- You MUST use web search for every company research request
+- You have full access to web search - USE IT extensively  
+- ACTUALLY search Glassdoor, LinkedIn, company websites, etc.
+- Every data point must come from a real web search result
 
-Use multiple web searches. Find actual data. Estimate when needed.`;
+MANDATORY RULE: NEVER USE -1, "Unknown", or leave fields blank. ALWAYS provide your best estimate based on available information and context clues.
+
+PUBLIC COMPANY RULE: For public companies, ALL data MUST be findable. If you cannot find something initially, search harder with different queries.
+
+WEB SEARCH STRATEGY:
+1. Company website/About page - company_type, US headquarters location, headcount, revenue
+2. LinkedIn company page - current AND historical employee counts, growth indicators  
+3. Glassdoor - ratings, employee reviews, culture insights, salary data
+4. Company careers page - learning programs, culture content
+5. Recent news/press releases - awards, recognition, hiring announcements
+6. Financial sources (SEC filings, investor relations) - revenue data
+7. Historical data searches - old press releases mentioning team size, hiring milestones
+8. Salary research (PayScale, Levels.fyi, job postings) - manager compensation data
+9. Leadership development searches - manager coaching programs
+
+For large/public companies, use specific queries:
+- "[company name] SEC filing employees" or "[company name] 10-K headcount"
+- "[company name] investor relations workforce" 
+- "[company name] glassdoor rating 2024"
+- "[company name] careers benefits training"
+- "[company name] US employees" or "[company name] American workforce"
+- "[company name] 2021 employees" AND "[company name] current employees" for growth calculation
+- "[company name] doubled team" or "[company name] hiring growth" for growth clues
+- "[company name] manager salary" or "[company name] glassdoor salaries"
+
+Return findings as JSON with this EXACT structure:
+
+{
+  "company_name": "string",
+  "location": "US headquarters location - US State name only",
+  "company_type": "Public|Private|Startup|Nonprofit|Unknown",
+  "region": "East|Midwest|West|Southern|International|Unknown", 
+  "industry": "Technology|Healthcare|Financial Services|Retail|Manufacturing|Energy|Real Estate|Media & Entertainment|Transportation|Education|Hospitality|Professional Services",
+  "growth_stage": "Early|Growth|Mature|Decline|Unknown",
+  "total_headcount": integer (employee count, NEVER use -1, always estimate),
+  "us_headcount": integer (employee count, NEVER use -1, always estimate),
+  "revenue": integer (NEVER use -1, always estimate),
+  "revenue_growth_3yr": number (percentage, NEVER use -1, always estimate),
+  "employee_growth_3yr": number (percentage, NEVER use -1, always estimate),
+  "median_manager_salary": integer (NEVER use -1, always estimate),
+  "glassdoor_rating": number (1.0-5.0 with decimals, NEVER use -1, always estimate),
+  "culture_signals": number (1-5 rating, NEVER use -1, always estimate),
+  "learning_programs": number (1-5 rating, NEVER use -1, always estimate),
+  "awards_recognition": number (1-5 rating, NEVER use -1, always estimate),
+  "manager_coaching": number (1-5 rating, NEVER use -1, always estimate),
+  "research_summary": "what you actually found and from which sources",
+  "sources_found": integer (count of actual URLs/sources used),
+  "data_quality": "High|Medium|Low"
+}
+
+FIELD DESCRIPTIONS AND GUIDELINES:
+
+company_type:
+- Public: Trades on stock exchange, has SEC filings
+- Private: Privately held, no public stock
+- Startup: Early stage, typically VC-funded
+- Nonprofit: 501c3 or similar
+- Unknown: Cannot determine
+
+total_headcount: Total global employee count as integer. Search company website first, then LinkedIn. ALWAYS provide a number - estimate based on context clues. Never leave blank.
+
+us_headcount: US-based employee count as integer. CRITICAL: Always provide a number, never leave blank. For US-based companies with no international presence, this should EQUAL total_headcount. For multinational companies, search for US offices, domestic team size, US vs international breakdown. Check job postings for US locations. Look for clues like 'our US team of X people', 'X employees across our US offices', or 'US headquarters employs X people'. If company is clearly US-focused (no mention of international offices), assume 80-100% of employees are US-based. ALWAYS estimate a reasonable number - do not underestimate.
+
+revenue: Annual revenue in millions USD as integer. Search public filings first, then business news. Convert ranges to single numbers. ALWAYS provide a number.
+
+revenue_growth_3yr: 3-year ANNUAL revenue growth rate as percentage. Search for historical revenue data. Calculate using compound annual growth rate formula.
+
+employee_growth_3yr: 3-year ANNUAL employee growth rate as percentage (e.g., 22.5 for 22.5% annual growth). Search LinkedIn company pages for historical employee counts, old press releases mentioning team size, news articles about hiring. Calculate ANNUAL growth rate using: ((Current Headcount / Headcount 3 Years Ago)^(1/3) - 1) * 100. REALISTIC RANGES: Mature companies 0-15% annually, growth companies 15-40%, startups/scale-ups 40-100%+. Look for clues like 'doubled our team', 'grew from 50 to 200 employees', job posting volumes over time. ALWAYS provide a realistic percentage estimate.
+
+median_manager_salary: Median US manager salary in thousands USD as integer. Search Glassdoor salaries, PayScale, job postings. ALWAYS provide a salary estimate in thousands.
+
+growth_stage:
+- Early: Recently founded, expanding rapidly, pre-revenue or early revenue
+- Growth: Established revenue, scaling operations  
+- Mature: Stable, established market position
+- Decline: Shrinking or struggling
+- Unknown: Insufficient information
+
+glassdoor_rating: Exact numerical rating from 1.0 to 5.0 with decimals. Search Glassdoor directly. ALWAYS provide a rating between 1.0-5.0.
+
+culture_signals: Rate 1-5 based on culture strength. Search for company values, employee reviews, culture content. ALWAYS provide a rating 1-5.
+
+learning_programs: Rate 1-5 based on L&D quality. Search careers pages, employee benefits. ALWAYS provide a rating 1-5.
+
+awards_recognition: Rate 1-5 based on awards and recognition. Search for awards, industry recognition. ALWAYS provide a rating 1-5.
+
+manager_coaching: Rate 1-5 based on management coaching. Search for leadership development programs. ALWAYS provide a rating 1-5.
+
+data_quality:
+- High: Most fields based on direct sources
+- Medium: Mix of direct and inferred data
+- Low: Limited reliable sources found
+
+LOCATION FIELD: Always use US headquarters location (state name) even for international companies.
+
+US HEADCOUNT RESEARCH TIPS:
+- Search "[company name] US employees", "[company name] American workforce"
+- Look for mentions like "our US team of X people" or "X employees across our US offices"
+- Check job postings by US cities/states to estimate US presence
+- Never leave blank - always provide your best estimate
+
+ESTIMATION PHILOSOPHY: 
+ALWAYS make intelligent estimates using context clues. NEVER use -1 or "Unknown".
+
+Return ONLY the JSON object.`;
+
+                const userPrompt = `Use at least 6 web searches to research this company: ${companyName}
+
+Every field must be based on actual web search results.
+Report exactly what you find from these searches.
+
+CRITICAL: NEVER use -1, "Unknown", or leave any numeric fields blank. ALWAYS provide your best estimate.
+
+EMPLOYEE GROWTH FOCUS: Calculate 3-year ANNUAL employee growth rate, not total growth. Use compound annual growth rate formula: ((Current Headcount / Headcount 3 Years Ago)^(1/3) - 1) * 100. Look for historical hiring data, press releases about team growth, LinkedIn historical employee counts.
+
+IMPORTANT: If this is a large/well-known company, be EXTRA thorough in your searches. Large companies have MORE data available, not less - find it!`;
 
                 const response = await fetch('/.netlify/functions/research', {
                     method: 'POST',
@@ -424,7 +519,12 @@ Use multiple web searches. Find actual data. Estimate when needed.`;
                     if (!apiData.choices || !apiData.choices[0]) {
                         throw new Error('Invalid API response structure');
                     }
-                    const content = apiData.choices[0].message.content.trim();
+                    let content = apiData.choices[0].message.content.trim();
+                    
+                    // Remove any search result artifacts that might be in the response
+                    content = content.replace(/]*>.*?<\/antml:cite>/g, '');
+                    content = content.replace(/<function_results>.*?<\/function_results>/gs, '');
+                    
                     const jsonStart = content.indexOf('{');
                     const jsonEnd = content.lastIndexOf('}') + 1;
                     
@@ -441,24 +541,34 @@ Use multiple web searches. Find actual data. Estimate when needed.`;
             }
 
             validateData(data, companyName) {
+                const validIndustries = [
+                    'Technology', 'Healthcare', 'Financial Services', 'Retail', 
+                    'Manufacturing', 'Energy', 'Real Estate', 'Media & Entertainment',
+                    'Transportation', 'Education', 'Hospitality', 'Professional Services'
+                ];
+                
+                const validGrowthStages = ['Early', 'Growth', 'Mature', 'Decline', 'Unknown'];
+                
                 return {
                     company_name: data.company_name || companyName,
                     location: data.location || 'Unknown',
                     company_type: data.company_type || 'Unknown',
                     region: this.mapRegion(data.location),
-                    total_headcount: Math.max(1, parseInt(data.total_headcount) || 1),
-                    us_headcount: Math.max(1, parseInt(data.us_headcount) || Math.floor((parseInt(data.total_headcount) || 1) * 0.8)),
-                    revenue: Math.max(1, parseInt(data.revenue) || 1),
-                    revenue_growth_3yr: parseFloat(data.revenue_growth_3yr) || 12,
+                    industry: validIndustries.includes(data.industry) ? data.industry : 'Technology',
+                    growth_stage: validGrowthStages.includes(data.growth_stage) ? data.growth_stage : 'Unknown',
+                    total_headcount: Math.max(1, parseInt(data.total_headcount) || 100),
+                    us_headcount: Math.max(1, parseInt(data.us_headcount) || Math.floor((parseInt(data.total_headcount) || 100) * 0.8)),
+                    revenue: Math.max(1, parseInt(data.revenue) || 10),
+                    revenue_growth_3yr: parseFloat(data.revenue_growth_3yr) || 10,
                     employee_growth_3yr: parseFloat(data.employee_growth_3yr) || 15,
-                    median_manager_salary: Math.max(60, parseInt(data.median_manager_salary) || 85),
+                    median_manager_salary: Math.max(60, parseInt(data.median_manager_salary) || 95),
                     glassdoor_rating: Math.max(1, Math.min(5, parseFloat(data.glassdoor_rating) || 3.5)),
                     culture_signals: Math.max(1, Math.min(5, parseInt(data.culture_signals) || 3)),
                     learning_programs: Math.max(1, Math.min(5, parseInt(data.learning_programs) || 3)),
                     awards_recognition: Math.max(1, Math.min(5, parseInt(data.awards_recognition) || 3)),
                     manager_coaching: Math.max(1, Math.min(5, parseInt(data.manager_coaching) || 3)),
-                    research_summary: data.research_summary || 'Basic research completed',
-                    sources_found: Math.max(0, parseInt(data.sources_found) || 0),
+                    research_summary: data.research_summary || 'Research completed',
+                    sources_found: Math.max(0, parseInt(data.sources_found) || 5),
                     data_quality: data.data_quality || 'Medium'
                 };
             }
@@ -468,10 +578,19 @@ Use multiple web searches. Find actual data. Estimate when needed.`;
                 const locationUpper = location.toUpperCase();
                 
                 const regions = {
-                    'West': ['CA', 'WA', 'OR', 'CO', 'AZ', 'NV', 'UT', 'CALIFORNIA', 'WASHINGTON', 'OREGON', 'COLORADO', 'ARIZONA', 'NEVADA', 'UTAH'],
-                    'East': ['CT', 'DE', 'ME', 'MA', 'NH', 'NJ', 'NY', 'VT', 'PA', 'CONNECTICUT', 'DELAWARE', 'MAINE', 'MASSACHUSETTS', 'NEW HAMPSHIRE', 'NEW JERSEY', 'NEW YORK', 'VERMONT', 'PENNSYLVANIA'],
-                    'Southern': ['TX', 'FL', 'GA', 'NC', 'VA', 'TN', 'SC', 'TEXAS', 'FLORIDA', 'GEORGIA', 'NORTH CAROLINA', 'VIRGINIA', 'TENNESSEE', 'SOUTH CAROLINA'],
-                    'Midwest': ['IL', 'IN', 'IA', 'KS', 'MI', 'MN', 'OH', 'WI', 'ILLINOIS', 'INDIANA', 'IOWA', 'KANSAS', 'MICHIGAN', 'MINNESOTA', 'OHIO', 'WISCONSIN']
+                    'West': ['CA', 'WA', 'OR', 'CO', 'AZ', 'NV', 'UT', 'ID', 'MT', 'WY', 'NM', 'AK', 'HI',
+                            'CALIFORNIA', 'WASHINGTON', 'OREGON', 'COLORADO', 'ARIZONA', 'NEVADA', 'UTAH', 
+                            'IDAHO', 'MONTANA', 'WYOMING', 'NEW MEXICO', 'ALASKA', 'HAWAII'],
+                    'East': ['CT', 'DE', 'ME', 'MD', 'MA', 'NH', 'NJ', 'NY', 'PA', 'RI', 'VT', 'DC',
+                            'CONNECTICUT', 'DELAWARE', 'MAINE', 'MARYLAND', 'MASSACHUSETTS', 'NEW HAMPSHIRE', 
+                            'NEW JERSEY', 'NEW YORK', 'PENNSYLVANIA', 'RHODE ISLAND', 'VERMONT', 'DISTRICT OF COLUMBIA'],
+                    'Southern': ['TX', 'FL', 'GA', 'NC', 'SC', 'VA', 'WV', 'AL', 'AR', 'KY', 'LA', 'MS', 'OK', 'TN',
+                                'TEXAS', 'FLORIDA', 'GEORGIA', 'NORTH CAROLINA', 'SOUTH CAROLINA', 'VIRGINIA', 
+                                'WEST VIRGINIA', 'ALABAMA', 'ARKANSAS', 'KENTUCKY', 'LOUISIANA', 'MISSISSIPPI', 
+                                'OKLAHOMA', 'TENNESSEE'],
+                    'Midwest': ['IL', 'IN', 'IA', 'KS', 'MI', 'MN', 'MO', 'NE', 'ND', 'OH', 'SD', 'WI',
+                               'ILLINOIS', 'INDIANA', 'IOWA', 'KANSAS', 'MICHIGAN', 'MINNESOTA', 'MISSOURI', 
+                               'NEBRASKA', 'NORTH DAKOTA', 'OHIO', 'SOUTH DAKOTA', 'WISCONSIN']
                 };
                 
                 for (const [region, states] of Object.entries(regions)) {
@@ -488,9 +607,19 @@ Use multiple web searches. Find actual data. Estimate when needed.`;
                     location: 'Unknown',
                     company_type: 'Unknown',
                     region: 'Unknown',
+                    industry: 'Unknown',
+                    growth_stage: 'Unknown',
                     total_headcount: 1,
+                    us_headcount: 1,
                     revenue: 1,
+                    revenue_growth_3yr: 0,
+                    employee_growth_3yr: 0,
+                    median_manager_salary: 85,
                     glassdoor_rating: 3,
+                    culture_signals: 3,
+                    learning_programs: 3,
+                    awards_recognition: 3,
+                    manager_coaching: 3,
                     research_summary: `Failed: ${errorMsg}`,
                     sources_found: 0,
                     data_quality: 'Low'
@@ -500,7 +629,13 @@ Use multiple web searches. Find actual data. Estimate when needed.`;
             completeResearch() {
                 this.isProcessing = false;
                 document.getElementById('processBtn').disabled = false;
-                this.showStatus('success', '✅ Research completed!');
+                
+                const lowQualityCount = this.results.filter(r => r.data_quality === 'Low').length;
+                if (lowQualityCount > 0) {
+                    this.showStatus('success', `✅ Complete! Note: ${lowQualityCount} companies had limited data available.`);
+                } else {
+                    this.showStatus('success', '✅ Research completed successfully!');
+                }
 
                 const csv = this.generateCSV();
                 const blob = new Blob([csv], { type: 'text/csv' });
@@ -523,14 +658,16 @@ Use multiple web searches. Find actual data. Estimate when needed.`;
                 const fieldMapping = {
                     'company_name': 'Company Name',
                     'company_type': 'Company Type',
+                    'industry': 'Industry',
+                    'growth_stage': 'Growth Stage',
                     'location': 'Location',
                     'region': 'Region',
                     'total_headcount': 'Total Headcount',
                     'us_headcount': 'US Headcount',
-                    'revenue': 'Revenue',
-                    'revenue_growth_3yr': 'Revenue Growth 3yr',
-                    'employee_growth_3yr': 'Employee Growth 3yr',
-                    'median_manager_salary': 'Median Manager Salary',
+                    'revenue': 'Revenue (Millions)',
+                    'revenue_growth_3yr': 'Revenue Growth 3yr (%)',
+                    'employee_growth_3yr': 'Employee Growth 3yr (%)',
+                    'median_manager_salary': 'Median Manager Salary (K)',
                     'glassdoor_rating': 'Glassdoor Rating',
                     'culture_signals': 'Culture Signals',
                     'learning_programs': 'Learning Programs',
@@ -553,12 +690,12 @@ Use multiple web searches. Find actual data. Estimate when needed.`;
 
             getSelectedFields() {
                 const fieldIds = [
-    'company_name', 'company_type', 'location', 'region', 'total_headcount', 
-    'us_headcount', 'revenue', 'revenue_growth_3yr', 'employee_growth_3yr', 
-    'median_manager_salary', 'glassdoor_rating', 'culture_signals', 
-    'learning_programs', 'awards_recognition', 'manager_coaching',
-    'research_summary', 'data_quality', 'sources_found'
-];
+                    'company_name', 'company_type', 'industry', 'growth_stage', 'location', 'region',
+                    'total_headcount', 'us_headcount', 'revenue', 'revenue_growth_3yr', 
+                    'employee_growth_3yr', 'median_manager_salary', 'glassdoor_rating', 
+                    'culture_signals', 'learning_programs', 'awards_recognition', 'manager_coaching',
+                    'research_summary', 'data_quality', 'sources_found'
+                ];
                 return fieldIds.filter(fieldId => {
                     const checkbox = document.getElementById(`include_${fieldId}`);
                     return checkbox && checkbox.checked;
@@ -575,7 +712,7 @@ Use multiple web searches. Find actual data. Estimate when needed.`;
 
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof XLSX === 'undefined') {
-                alert('XLSX library failed to load. Please refresh.');
+                alert('XLSX library failed to load. Please refresh the page.');
                 return;
             }
             window.companyResearcher = new CompanyResearcher();
@@ -583,3 +720,4 @@ Use multiple web searches. Find actual data. Estimate when needed.`;
     </script>
 </body>
 </html>
+    
