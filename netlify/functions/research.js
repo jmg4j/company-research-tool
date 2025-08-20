@@ -1,18 +1,23 @@
+// Add timeout configuration
+exports.config = {
+    timeout: 26
+};
+
 exports.handler = async (event, context) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
   };
-
+  
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers, body: '' };
   }
-
+  
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
-
+  
   try {
     const apiKey = process.env.PERPLEXITY_API_KEY;
     
@@ -23,9 +28,9 @@ exports.handler = async (event, context) => {
         body: JSON.stringify({ error: 'API key not configured' }),
       };
     }
-
+    
     const { messages, model = 'sonar-reasoning-pro' } = JSON.parse(event.body);
-
+    
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
@@ -40,9 +45,9 @@ exports.handler = async (event, context) => {
         return_citations: true
       })
     });
-
+    
     const data = await response.json();
-
+    
     if (!response.ok) {
       return {
         statusCode: response.status,
@@ -50,13 +55,12 @@ exports.handler = async (event, context) => {
         body: JSON.stringify(data),
       };
     }
-
+    
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify(data),
     };
-
   } catch (error) {
     return {
       statusCode: 500,
