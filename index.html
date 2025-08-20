@@ -77,9 +77,9 @@
                 </div>
             </div>
 
-            <div class="section">
+           <div class="section">
                 <h2>☑️ Select Data Fields</h2>
-                      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
                     <label style="display: flex; align-items: center; margin: 5px 0; cursor: pointer;">
                         <input type="checkbox" id="include_company_name" checked disabled style="margin-right: 8px;">
                         <span>Company Name</span>
@@ -128,8 +128,12 @@
                         <input type="checkbox" id="include_research_summary" checked style="margin-right: 8px;">
                         <span>Research Summary</span>
                     </label>
-                </div>
-            </div>
+                   </div>
+        <div style="margin-top: 15px;">
+            <button onclick="selectAllFields()" class="quick-btn">✅ All</button>
+            <button onclick="selectEssentialFields()" class="quick-btn">🎯 Essential</button>
+        </div>
+    </div>
 
             <div class="section">
                 <h2>📄 Upload Companies</h2>
@@ -265,13 +269,16 @@ Return JSON with this EXACT structure:
   "company_type": "Public|Private|Startup|Nonprofit|Unknown",
   "region": "East|Midwest|West|Southern|International|Unknown",
   "total_headcount": integer,
+  "us_headcount": integer,
   "revenue": integer,
+  "employee_growth_3yr": number,
+  "median_manager_salary": integer,
   "glassdoor_rating": number,
+  "culture_signals": number,
   "research_summary": "what you found and sources",
   "sources_found": integer,
   "data_quality": "High|Medium|Low"
 }`;
-
                 const userPrompt = `Research this company: ${companyName}
 
 Use multiple web searches. Find actual data. Estimate when needed.`;
@@ -319,20 +326,24 @@ Use multiple web searches. Find actual data. Estimate when needed.`;
                 }
             }
 
-            validateData(data, companyName) {
-                return {
-                    company_name: data.company_name || companyName,
-                    location: data.location || 'Unknown',
-                    company_type: data.company_type || 'Unknown',
-                    region: this.mapRegion(data.location),
-                    total_headcount: Math.max(1, parseInt(data.total_headcount) || 1),
-                    revenue: Math.max(1, parseInt(data.revenue) || 1),
-                    glassdoor_rating: Math.max(1, Math.min(5, parseFloat(data.glassdoor_rating) || 3)),
-                    research_summary: data.research_summary || 'Basic research completed',
-                    sources_found: Math.max(0, parseInt(data.sources_found) || 0),
-                    data_quality: data.data_quality || 'Medium'
-                };
-            }
+                validateData(data, companyName) {
+                    return {
+                        company_name: data.company_name || companyName,
+                        location: data.location || 'Unknown',
+                        company_type: data.company_type || 'Unknown',
+                        region: this.mapRegion(data.location),
+                        total_headcount: Math.max(1, parseInt(data.total_headcount) || 1),
+                        us_headcount: Math.max(1, parseInt(data.us_headcount) || Math.floor((parseInt(data.total_headcount) || 1) * 0.8)),
+                        revenue: Math.max(1, parseInt(data.revenue) || 1),
+                        employee_growth_3yr: parseFloat(data.employee_growth_3yr) || 15,
+                        median_manager_salary: Math.max(60, parseInt(data.median_manager_salary) || 85),
+                        glassdoor_rating: Math.max(1, Math.min(5, parseFloat(data.glassdoor_rating) || 3.5)),
+                        culture_signals: Math.max(1, Math.min(5, parseInt(data.culture_signals) || 3)),
+                        research_summary: data.research_summary || 'Basic research completed',
+                        sources_found: Math.max(0, parseInt(data.sources_found) || 0),
+                        data_quality: data.data_quality || 'Medium'
+                    };
+                }
 
             mapRegion(location) {
                 if (!location) return 'Unknown';
