@@ -79,7 +79,7 @@
 
             <div class="section">
                 <h2>☑️ Select Data Fields</h2>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
                     <label style="display: flex; align-items: center; margin: 5px 0; cursor: pointer;">
                         <input type="checkbox" id="include_company_name" checked disabled style="margin-right: 8px;">
                         <span>Company Name</span>
@@ -101,17 +101,33 @@
                         <span>Total Headcount</span>
                     </label>
                     <label style="display: flex; align-items: center; margin: 5px 0; cursor: pointer;">
+                        <input type="checkbox" id="include_us_headcount" checked style="margin-right: 8px;">
+                        <span>US Headcount</span>
+                    </label>
+                    <label style="display: flex; align-items: center; margin: 5px 0; cursor: pointer;">
                         <input type="checkbox" id="include_revenue" checked style="margin-right: 8px;">
                         <span>Revenue</span>
+                    </label>
+                    <label style="display: flex; align-items: center; margin: 5px 0; cursor: pointer;">
+                        <input type="checkbox" id="include_employee_growth_3yr" checked style="margin-right: 8px;">
+                        <span>Employee Growth (3yr)</span>
+                    </label>
+                    <label style="display: flex; align-items: center; margin: 5px 0; cursor: pointer;">
+                        <input type="checkbox" id="include_median_manager_salary" style="margin-right: 8px;">
+                        <span>Manager Salary</span>
                     </label>
                     <label style="display: flex; align-items: center; margin: 5px 0; cursor: pointer;">
                         <input type="checkbox" id="include_glassdoor_rating" checked style="margin-right: 8px;">
                         <span>Glassdoor Rating</span>
                     </label>
-                </div>
-                <div style="margin-top: 15px;">
-                    <button onclick="selectAllFields()" class="quick-btn">✅ All</button>
-                    <button onclick="selectEssentialFields()" class="quick-btn">🎯 Essential</button>
+                    <label style="display: flex; align-items: center; margin: 5px 0; cursor: pointer;">
+                        <input type="checkbox" id="include_culture_signals" style="margin-right: 8px;">
+                        <span>Culture Signals</span>
+                    </label>
+                    <label style="display: flex; align-items: center; margin: 5px 0; cursor: pointer;">
+                        <input type="checkbox" id="include_research_summary" checked style="margin-right: 8px;">
+                        <span>Research Summary</span>
+                    </label>
                 </div>
             </div>
 
@@ -320,14 +336,19 @@ Use multiple web searches. Find actual data. Estimate when needed.`;
 
             mapRegion(location) {
                 if (!location) return 'Unknown';
+                const locationUpper = location.toUpperCase();
+                
                 const regions = {
-                    'East': ['CT', 'DE', 'ME', 'MA', 'NH', 'NJ', 'NY', 'VT'],
-                    'Midwest': ['IL', 'IN', 'IA', 'KS', 'MI', 'MN', 'OH', 'WI'],
-                    'West': ['CA', 'WA', 'OR', 'CO', 'AZ', 'NV', 'UT'],
-                    'Southern': ['TX', 'FL', 'GA', 'NC', 'VA', 'TN', 'SC']
+                    'West': ['CA', 'WA', 'OR', 'CO', 'AZ', 'NV', 'UT', 'CALIFORNIA', 'WASHINGTON', 'OREGON', 'COLORADO', 'ARIZONA', 'NEVADA', 'UTAH'],
+                    'East': ['CT', 'DE', 'ME', 'MA', 'NH', 'NJ', 'NY', 'VT', 'PA', 'CONNECTICUT', 'DELAWARE', 'MAINE', 'MASSACHUSETTS', 'NEW HAMPSHIRE', 'NEW JERSEY', 'NEW YORK', 'VERMONT', 'PENNSYLVANIA'],
+                    'Southern': ['TX', 'FL', 'GA', 'NC', 'VA', 'TN', 'SC', 'TEXAS', 'FLORIDA', 'GEORGIA', 'NORTH CAROLINA', 'VIRGINIA', 'TENNESSEE', 'SOUTH CAROLINA'],
+                    'Midwest': ['IL', 'IN', 'IA', 'KS', 'MI', 'MN', 'OH', 'WI', 'ILLINOIS', 'INDIANA', 'IOWA', 'KANSAS', 'MICHIGAN', 'MINNESOTA', 'OHIO', 'WISCONSIN']
                 };
+                
                 for (const [region, states] of Object.entries(regions)) {
-                    if (states.some(state => location.includes(state))) return region;
+                    if (states.some(state => locationUpper.includes(state))) {
+                        return region;
+                    }
                 }
                 return 'Unknown';
             }
@@ -376,8 +397,13 @@ Use multiple web searches. Find actual data. Estimate when needed.`;
                     'location': 'Location',
                     'region': 'Region',
                     'total_headcount': 'Total Headcount',
+                    'us_headcount': 'US Headcount',
                     'revenue': 'Revenue',
-                    'glassdoor_rating': 'Glassdoor Rating'
+                    'employee_growth_3yr': 'Employee Growth 3yr',
+                    'median_manager_salary': 'Median Manager Salary',
+                    'glassdoor_rating': 'Glassdoor Rating',
+                    'culture_signals': 'Culture Signals',
+                    'research_summary': 'Research Summary'
                 };
 
                 const headers = selectedFields.map(field => fieldMapping[field]);
@@ -392,7 +418,7 @@ Use multiple web searches. Find actual data. Estimate when needed.`;
             }
 
             getSelectedFields() {
-                const fieldIds = ['company_name', 'company_type', 'location', 'region', 'total_headcount', 'revenue', 'glassdoor_rating'];
+                const fieldIds = ['company_name', 'company_type', 'location', 'region', 'total_headcount', 'us_headcount', 'revenue', 'employee_growth_3yr', 'median_manager_salary', 'glassdoor_rating', 'culture_signals', 'research_summary'];
                 return fieldIds.filter(fieldId => {
                     const checkbox = document.getElementById(`include_${fieldId}`);
                     return checkbox && checkbox.checked;
