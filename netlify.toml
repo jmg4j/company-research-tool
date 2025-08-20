@@ -1,2 +1,3 @@
-[functions]
-  timeout = 26
+[[functions]]
+path = "/*"
+timeout = 26
