@@ -1,5 +1,9 @@
-// netlify/functions/research.js
 exports.handler = async (event, context) => {
+  console.log('=== FUNCTION START ===');
+  console.log('Method:', event.httpMethod);
+  console.log('Has API Key:', !!process.env.PERPLEXITY_API_KEY);
+  console.log('API Key prefix:', process.env.PERPLEXITY_API_KEY?.substring(0, 8));
+  
   // Enable CORS
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -7,47 +11,28 @@ exports.handler = async (event, context) => {
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
   };
 
-  // Handle preflight requests
   if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 200,
-      headers,
-      body: '',
-    };
+    return { statusCode: 200, headers, body: '' };
   }
 
-  // Only allow POST requests
   if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({ error: 'Method not allowed' }),
-    };
+    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
 
   try {
-    // Get API key from environment variable instead of request body
     const apiKey = process.env.PERPLEXITY_API_KEY;
     
     if (!apiKey) {
+      console.log('ERROR: No API key found');
       return {
         statusCode: 500,
         headers,
-        body: JSON.stringify({ error: 'Server configuration error: API key not found' }),
+        body: JSON.stringify({ error: 'No API key configured' }),
       };
     }
 
-    const { messages, model = 'sonar-reasoning-pro' } = JSON.parse(event.body);
-
-    if (!messages) {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ error: 'Messages are required' }),
-      };
-    }
-
-    // Make request to Perplexity API using environment variable
+    console.log('Making API request...');
+    
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
@@ -55,37 +40,43 @@ exports.handler = async (event, context) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model,
-        messages,
-        max_tokens: 4000,
-        temperature: 0.1,
-        return_citations: true,
-        return_images: false
+        model: 'sonar-reasoning-pro',
+        messages: [
+          { role: 'user', content: 'Test message - just respond with "Hello"' }
+        ],
+        max_tokens: 50
       })
     });
 
-    const data = await response.json();
-
+    console.log('Response status:', response.status);
+    console.log('Response content-type:', response.headers.get('content-type'));
+    
     if (!response.ok) {
+      const errorText = await response.text();
+      console.log('API Error Response:', errorText);
       return {
         statusCode: response.status,
         headers,
-        body: JSON.stringify(data),
+        body: JSON.stringify({ error: 'Perplexity API error', details: errorText }),
       };
     }
 
+    const data = await response.json();
+    console.log('SUCCESS: Got JSON response');
+    
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify(data),
+      body: JSON.stringify({ success: true, message: 'API working!' }),
     };
 
   } catch (error) {
-    console.error('Error:', error);
+    console.log('CATCH ERROR:', error.message);
+    console.log('Error stack:', error.stack);
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: 'Internal server error', details: error.message }),
+      body: JSON.stringify({ error: 'Function error', details: error.message }),
     };
   }
 };
