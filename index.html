@@ -5,320 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Company Research Tool</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            min-height: 100vh; padding: 20px;
         }
-
         .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
+            max-width: 1000px; margin: 0 auto; background: white;
+            border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden;
         }
-
         .header {
             background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            color: white;
-            padding: 40px;
-            text-align: center;
+            color: white; padding: 40px; text-align: center;
         }
-
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .header p {
-            font-size: 1.2em;
-            opacity: 0.9;
-        }
-
-        .main-content {
-            padding: 40px;
-        }
-
-        .section {
-            margin-bottom: 40px;
-        }
-
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; font-weight: 700; }
+        .header p { font-size: 1.2em; opacity: 0.9; }
+        .main-content { padding: 40px; }
+        .section { margin-bottom: 40px; }
         .section h2 {
-            font-size: 1.8em;
-            margin-bottom: 20px;
-            color: #1f2937;
-            border-bottom: 3px solid #4f46e5;
-            padding-bottom: 10px;
+            font-size: 1.8em; margin-bottom: 20px; color: #1f2937;
+            border-bottom: 3px solid #4f46e5; padding-bottom: 10px;
         }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group label {
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #374151;
-            font-size: 0.95em;
-        }
-
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-weight: 600; margin-bottom: 8px; color: #374151; }
         .form-group input, .form-group select {
-            padding: 12px 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: white;
+            padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 8px;
+            font-size: 16px; background: white;
         }
-
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        }
-
         .upload-section {
-            border: 3px dashed #d1d5db;
-            border-radius: 12px;
-            padding: 40px;
-            text-align: center;
-            transition: all 0.3s ease;
-            background: #f9fafb;
+            border: 3px dashed #d1d5db; border-radius: 12px; padding: 40px;
+            text-align: center; background: #f9fafb; cursor: pointer;
         }
-
-        .upload-section:hover {
-            border-color: #4f46e5;
-            background: #f3f4f6;
-        }
-
-        .upload-section.dragover {
-            border-color: #4f46e5;
-            background: #eef2ff;
-        }
-
-        .upload-icon {
-            font-size: 3em;
-            color: #9ca3af;
-            margin-bottom: 16px;
-        }
-
-        .upload-text {
-            font-size: 1.2em;
-            color: #6b7280;
-            margin-bottom: 16px;
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .upload-btn {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .upload-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-        }
-
+        .upload-section:hover { border-color: #4f46e5; background: #f3f4f6; }
         .file-info {
-            margin-top: 20px;
-            padding: 16px;
-            background: #ecfdf5;
-            border: 2px solid #10b981;
-            border-radius: 8px;
-            color: #065f46;
+            margin-top: 20px; padding: 16px; background: #ecfdf5;
+            border: 2px solid #10b981; border-radius: 8px; color: #065f46;
         }
-
         .process-btn {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            padding: 16px 32px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-top: 30px;
+            color: white; padding: 16px 32px; border: none; border-radius: 12px;
+            font-size: 1.1em; cursor: pointer; width: 100%; margin-top: 30px;
         }
-
-        .process-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
-        }
-
-        .process-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .status {
-            margin-top: 20px;
-            padding: 16px;
-            border-radius: 8px;
-            font-weight: 500;
-            display: none;
-        }
-
-        .status.success {
-            background: #ecfdf5;
-            border: 2px solid #10b981;
-            color: #065f46;
-        }
-
-        .status.error {
-            background: #fef2f2;
-            border: 2px solid #ef4444;
-            color: #991b1b;
-        }
-
-        .status.processing {
-            background: #fffbeb;
-            border: 2px solid #f59e0b;
-            color: #92400e;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e5e7eb;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4f46e5, #7c3aed);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .results-section {
-            margin-top: 30px;
-            display: none;
-        }
-
-        .download-btn {
-            background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
-            color: white;
-            padding: 14px 28px;
-            border: none;
-            border-radius: 10px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .download-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(124, 58, 237, 0.3);
-        }
-
-        .warning {
-            background: #fef3c7;
-            border: 2px solid #f59e0b;
-            color: #92400e;
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .warning strong {
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .output-config-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
-        }
-
-        .config-section {
-            background: #f8fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 20px;
-        }
-
-        .field-checkbox {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
-            cursor: pointer;
-            font-size: 0.9em;
-            color: #4b5563;
-        }
-
-        .field-checkbox input {
-            margin-right: 8px;
-        }
-
-        .quick-btn {
-            background: #4f46e5;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: all 0.3s ease;
-        }
-
-        .quick-btn:hover {
-            background: #3730a3;
-            transform: translateY(-1px);
-        }
-
-        @media (max-width: 768px) {
-            .form-grid, .output-config-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .header {
-                padding: 30px 20px;
-            }
-            
-            .header h1 {
-                font-size: 2em;
-            }
-            
-            .main-content {
-                padding: 30px 20px;
-            }
-        }
+        .process-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .status { margin-top: 20px; padding: 16px; border-radius: 8px; display: none; }
+        .status.success { background: #ecfdf5; border: 2px solid #10b981; color: #065f46; }
+        .status.error { background: #fef2f2; border: 2px solid #ef4444; color: #991b1b; }
+        .status.processing { background: #fffbeb; border: 2px solid #f59e0b; color: #92400e; }
+        .quick-btn { background: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin: 5px; }
     </style>
 </head>
 <body>
@@ -327,268 +62,89 @@
             <h1>🔍 Company Research Tool</h1>
             <p>Automated competitive intelligence research powered by AI</p>
         </div>
-
         <div class="main-content">
-            <div class="warning">
-                <strong>⚠️ Important Limits:</strong>
-                Please upload maximum 20 companies at a time. Each research costs approximately $0.10-0.20 per company. API costs are covered by the site - just use responsibly!
+            <div style="background: #fef3c7; border: 2px solid #f59e0b; color: #92400e; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
+                <strong>⚠️ Important:</strong> Upload max 20 companies. API costs covered - use responsibly!
             </div>
-
+            
             <div class="section">
-                <h2>⚙️ Research Configuration</h2>
+                <h2>⚙️ Configuration</h2>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="researchDepth">Research Depth</label>
-                        <select id="researchDepth">
-                            <option value="basic">Basic (3-4 searches per company)</option>
-                            <option value="standard" selected>Standard (6-8 searches per company)</option>
-                            <option value="deep">Deep (10+ searches per company)</option>
-                        </select>
-                        <small style="color: #6b7280; margin-top: 4px;">More searches = better data but higher cost (~$0.05-0.30 per company)</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="requestDelay">Request Delay (seconds)</label>
-                        <input type="number" id="requestDelay" value="3" min="1" max="10">
-                        <small style="color: #6b7280; margin-top: 4px;">Delay between API requests to avoid rate limits</small>
-                    </div>
-                    <div class="form-group">
                         <label for="outputFileName">Output File Name</label>
-                        <input type="text" id="outputFileName" placeholder="research_results" value="research_results">
-                        <small style="color: #6b7280; margin-top: 4px;">File will be saved as: [your-name]_YYYY-MM-DD.csv</small>
+                        <input type="text" id="outputFileName" value="research_results">
                     </div>
                 </div>
             </div>
 
             <div class="section">
-                <h2>📊 Data Output Configuration</h2>
-                <p style="color: #6b7280; margin-bottom: 20px; font-style: italic;">
-                    The AI will research all these data points for each company. Check the boxes for fields you want included in your output CSV:
-                </p>
-                
-                <div class="output-config-grid">
-                    
-                    <!-- Basic Company Info -->
-                    <div class="config-section">
-                        <h4 style="color: #1f2937; margin-bottom: 15px; font-weight: 600; display: flex; align-items: center;">
-                            🏢 <span style="margin-left: 8px;">Basic Company Information</span>
-                        </h4>
-                        <div class="field-options">
-                            <label class="field-checkbox">
-                                <input type="checkbox" id="include_company_name" checked disabled>
-                                <span><strong>Company Name</strong> - Company name (always included)</span>
-                            </label>
-                            <label class="field-checkbox">
-                                <input type="checkbox" id="include_company_type" checked>
-                                <span><strong>Company Type</strong> - Public, Private, Startup, Nonprofit, Unknown</span>
-                            </label>
-                            <label class="field-checkbox">
-                                <input type="checkbox" id="include_location" checked>
-                                <span><strong>Location</strong> - US headquarters state</span>
-                            </label>
-                            <label class="field-checkbox">
-                                <input type="checkbox" id="include_region" checked>
-                                <span><strong>Region</strong> - East, Midwest, West, Southern, International</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Employee Metrics -->
-                    <div class="config-section">
-                        <h4 style="color: #1f2937; margin-bottom: 15px; font-weight: 600; display: flex; align-items: center;">
-                            👥 <span style="margin-left: 8px;">Employee Metrics</span>
-                        </h4>
-                        <div class="field-options">
-                            <label class="field-checkbox">
-                                <input type="checkbox" id="include_total_headcount" checked>
-                                <span><strong>Total Headcount</strong> - Global employee count</span>
-                            </label>
-                            <label class="field-checkbox">
-                                <input type="checkbox" id="include_us_headcount" checked>
-                                <span><strong>US Headcount</strong> - US-based employee count</span>
-                            </label>
-                            <label class="field-checkbox">
-                                <input type="checkbox" id="include_employee_growth_3yr" checked>
-                                <span><strong>Employee Growth (3yr)</strong> - Annual growth rate percentage</span>
-                            </label>
-                            <label class="field-checkbox">
-                                <input type="checkbox" id="include_median_manager_salary">
-                                <span><strong>Median Manager Salary</strong> - US manager salary in thousands</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Financial Data -->
-                    <div class="config-section">
-                        <h4 style="color: #1f2937; margin-bottom: 15px; font-weight: 600; display: flex; align-items: center;">
-                            💰 <span style="margin-left: 8px;">Financial Data</span>
-                        </h4>
-                        <div class="field-options">
-                            <label class="field-checkbox">
-                                <input type="checkbox" id="include_revenue" checked>
-                                <span><strong>Revenue</strong> - Annual revenue in millions USD</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Culture & Workplace -->
-                    <div class="config-section">
-                        <h4 style="color: #1f2937; margin-bottom: 15px; font-weight: 600; display: flex; align-items: center;">
-                            🎯 <span style="margin-left: 8px;">Culture & Workplace (1-5 ratings)</span>
-                        </h4>
-                        <div class="field-options">
-                            <label class="field-checkbox">
-                                <input type="checkbox" id="include_glassdoor_rating" checked>
-                                <span><strong>Glassdoor Rating</strong> - Employee satisfaction (1.0-5.0)</span>
-                            </label>
-                            <label class="field-checkbox">
-                                <input type="checkbox" id="include_culture_signals">
-                                <span><strong>Culture Signals</strong> - Company culture strength</span>
-                            </label>
-                            <label class="field-checkbox">
-                                <input type="checkbox" id="include_learning_programs">
-                                <span><strong>Learning Programs</strong> - L&D and training quality</span>
-                            </label>
-                            <label class="field-checkbox">
-                                <input type="checkbox" id="include_awards_recognition">
-                                <span><strong>Awards & Recognition</strong> - Industry awards and recognition</span>
-                            </label>
-                            <label class="field-checkbox">
-                                <input type="checkbox" id="include_manager_coaching">
-                                <span><strong>Manager Coaching</strong> - Leadership development programs</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Research Metadata -->
-                    <div class="config-section">
-                        <h4 style="color: #1f2937; margin-bottom: 15px; font-weight: 600; display: flex; align-items: center;">
-                            🔍 <span style="margin-left: 8px;">Research Metadata</span>
-                        </h4>
-                        <div class="field-options">
-                            <label class="field-checkbox">
-                                <input type="checkbox" id="include_research_summary" checked>
-                                <span><strong>Research Summary</strong> - What sources were found</span>
-                            </label>
-                            <label class="field-checkbox">
-                                <input type="checkbox" id="include_data_quality" checked>
-                                <span><strong>Data Quality</strong> - High, Medium, Low confidence</span>
-                            </label>
-                            <label class="field-checkbox">
-                                <input type="checkbox" id="include_sources_found">
-                                <span><strong>Sources Found</strong> - Number of sources used</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Quick Actions -->
-                    <div class="config-section" style="background: #eef2ff; border: 2px solid #4f46e5;">
-                        <h4 style="color: #1f2937; margin-bottom: 15px; font-weight: 600; display: flex; align-items: center;">
-                            ⚡ <span style="margin-left: 8px;">Quick Actions</span>
-                        </h4>
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <button onclick="selectAllFields()" class="quick-btn" style="background: #4f46e5;">
-                                ✅ Select All Fields
-                            </button>
-                            <button onclick="selectEssentialFields()" class="quick-btn" style="background: #10b981;">
-                                🎯 Essential Fields Only
-                            </button>
-                            <button onclick="selectCultureFields()" class="quick-btn" style="background: #f59e0b;">
-                                🎨 Culture Focus
-                            </button>
-                        </div>
-                    </div>
-
+                <h2>☑️ Select Data Fields</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                    <label style="display: flex; align-items: center; margin: 5px 0; cursor: pointer;">
+                        <input type="checkbox" id="include_company_name" checked disabled style="margin-right: 8px;">
+                        <span>Company Name</span>
+                    </label>
+                    <label style="display: flex; align-items: center; margin: 5px 0; cursor: pointer;">
+                        <input type="checkbox" id="include_company_type" checked style="margin-right: 8px;">
+                        <span>Company Type</span>
+                    </label>
+                    <label style="display: flex; align-items: center; margin: 5px 0; cursor: pointer;">
+                        <input type="checkbox" id="include_location" checked style="margin-right: 8px;">
+                        <span>Location</span>
+                    </label>
+                    <label style="display: flex; align-items: center; margin: 5px 0; cursor: pointer;">
+                        <input type="checkbox" id="include_region" checked style="margin-right: 8px;">
+                        <span>Region</span>
+                    </label>
+                    <label style="display: flex; align-items: center; margin: 5px 0; cursor: pointer;">
+                        <input type="checkbox" id="include_total_headcount" checked style="margin-right: 8px;">
+                        <span>Total Headcount</span>
+                    </label>
+                    <label style="display: flex; align-items: center; margin: 5px 0; cursor: pointer;">
+                        <input type="checkbox" id="include_revenue" checked style="margin-right: 8px;">
+                        <span>Revenue</span>
+                    </label>
+                    <label style="display: flex; align-items: center; margin: 5px 0; cursor: pointer;">
+                        <input type="checkbox" id="include_glassdoor_rating" checked style="margin-right: 8px;">
+                        <span>Glassdoor Rating</span>
+                    </label>
+                </div>
+                <div style="margin-top: 15px;">
+                    <button onclick="selectAllFields()" class="quick-btn">✅ All</button>
+                    <button onclick="selectEssentialFields()" class="quick-btn">🎯 Essential</button>
                 </div>
             </div>
 
             <div class="section">
                 <h2>📄 Upload Companies</h2>
-                <div class="upload-section" id="uploadSection">
-                    <div class="upload-icon">📊</div>
-                    <div class="upload-text">
-                        Drag & drop your Excel/CSV file here<br>
-                        <small>or click to browse files</small>
+                <div class="upload-section" id="uploadSection" onclick="document.getElementById('fileInput').click()">
+                    <div style="font-size: 3em; margin-bottom: 16px;">📊</div>
+                    <div style="font-size: 1.2em; color: #6b7280; margin-bottom: 16px;">
+                        Click to upload CSV/Excel file
                     </div>
-                    <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
-                        Choose File
-                    </button>
-                    <input type="file" id="fileInput" class="file-input" accept=".csv,.xlsx,.xls">
+                    <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display: none;">
                 </div>
                 <div id="fileInfo" class="file-info" style="display: none;"></div>
             </div>
 
-            <button id="processBtn" class="process-btn" disabled>
-                🚀 Start Research Process
-            </button>
-
-            <div id="status" class="status">
-                <div id="statusText"></div>
-                <div class="progress-bar">
-                    <div id="progressFill" class="progress-fill"></div>
-                </div>
-            </div>
-
-            <div id="resultsSection" class="results-section">
-                <h2>✅ Research Complete!</h2>
-                <p>Your research has been completed successfully. Download the results below:</p>
-                <br>
-                <a id="downloadBtn" class="download-btn" download>
-                    📥 Download Results
-                </a>
+            <button id="processBtn" class="process-btn" disabled>🚀 Start Research</button>
+            <div id="status" class="status"><div id="statusText"></div></div>
+            <div id="resultsSection" style="margin-top: 30px; display: none;">
+                <h2>✅ Complete!</h2>
+                <a id="downloadBtn" style="background: #7c3aed; color: white; padding: 14px 28px; border-radius: 10px; text-decoration: none; display: inline-block; margin-top: 10px;">📥 Download</a>
             </div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
-        // Global functions for quick actions
-        function selectAllFields() {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"][id^="include_"]');
-            checkboxes.forEach(checkbox => {
-                if (!checkbox.disabled) {
-                    checkbox.checked = true;
-                }
-            });
+function selectAllFields() {
+            document.querySelectorAll('input[type="checkbox"][id^="include_"]:not([disabled])').forEach(cb => cb.checked = true);
         }
 
         function selectEssentialFields() {
-            // First uncheck all
-            const checkboxes = document.querySelectorAll('input[type="checkbox"][id^="include_"]');
-            checkboxes.forEach(checkbox => {
-                if (!checkbox.disabled) {
-                    checkbox.checked = false;
-                }
-            });
-
-            // Then check essential ones
-            const essentialFields = [
-                'company_name', 'company_type', 'location', 'region',
-                'total_headcount', 'revenue', 'glassdoor_rating', 'data_quality'
-            ];
-            
-            essentialFields.forEach(field => {
-                const checkbox = document.getElementById(`include_${field}`);
-                if (checkbox) checkbox.checked = true;
-            });
-        }
-
-        function selectCultureFields() {
-            // First uncheck all
-            const checkboxes = document.querySelectorAll('input[type="checkbox"][id^="include_"]');
-            checkboxes.forEach(checkbox => {
-                if (!checkbox.disabled) {
-                    checkbox.checked = false;
-                }
-            });
-
-            // Then check culture-focused ones
-            const cultureFields = [
-                'company_name', 'company_type', 'location', 'glassdoor_rating',
-                'culture_signals', 'learning_programs', 'awards_recognition',
-                'manager_coaching', 'research_summary'
-            ];
-            
-            cultureFields.forEach(field => {
+            document.querySelectorAll('input[type="checkbox"][id^="include_"]:not([disabled])').forEach(cb => cb.checked = false);
+            ['company_name', 'company_type', 'location', 'revenue', 'glassdoor_rating'].forEach(field => {
                 const checkbox = document.getElementById(`include_${field}`);
                 if (checkbox) checkbox.checked = true;
             });
@@ -603,188 +159,110 @@
             }
 
             initializeEventListeners() {
-                const fileInput = document.getElementById('fileInput');
-                const processBtn = document.getElementById('processBtn');
-                const uploadSection = document.getElementById('uploadSection');
-                
-                // File input change event
-                fileInput.addEventListener('change', this.handleFileSelect.bind(this));
-                
-                // Process button click event  
-                processBtn.addEventListener('click', this.startResearch.bind(this));
-                
-                // Drag and drop events
-                uploadSection.addEventListener('dragover', this.handleDragOver.bind(this));
-                uploadSection.addEventListener('drop', this.handleDrop.bind(this));
-                uploadSection.addEventListener('dragleave', this.handleDragLeave.bind(this));
-                
-                // Upload section click to trigger file input
-                uploadSection.addEventListener('click', () => {
-                    fileInput.click();
-                });
-            }
-
-            handleDragOver(e) {
-                e.preventDefault();
-                document.getElementById('uploadSection').classList.add('dragover');
-            }
-
-            handleDragLeave(e) {
-                e.preventDefault();
-                document.getElementById('uploadSection').classList.remove('dragover');
-            }
-
-            handleDrop(e) {
-                e.preventDefault();
-                document.getElementById('uploadSection').classList.remove('dragover');
-                const files = e.dataTransfer.files;
-                if (files.length > 0) {
-                    this.processFile(files[0]);
-                }
+                document.getElementById('fileInput').addEventListener('change', this.handleFileSelect.bind(this));
+                document.getElementById('processBtn').addEventListener('click', this.startResearch.bind(this));
             }
 
             handleFileSelect(e) {
-                console.log('File select triggered', e);
                 const file = e.target.files[0];
-                console.log('Selected file:', file);
-                if (file) {
-                    console.log('Processing file:', file.name, file.size, file.type);
-                    this.processFile(file);
-                } else {
-                    console.log('No file selected');
-                }
+                if (file) this.processFile(file);
             }
 
             async processFile(file) {
-                console.log('Starting to process file:', file.name);
                 try {
                     const companies = await this.parseFile(file);
-                    console.log('Parsed companies:', companies);
-                    
                     if (companies.length > 20) {
-                        this.showStatus('error', '❌ Too many companies! Please limit to 20 companies per batch.');
+                        this.showStatus('error', '❌ Too many companies! Limit to 20.');
                         return;
                     }
-
                     this.companies = companies;
-                    
                     document.getElementById('fileInfo').style.display = 'block';
                     document.getElementById('fileInfo').innerHTML = `
-                        <strong>✅ File uploaded successfully!</strong><br>
+                        <strong>✅ Success!</strong><br>
                         Found ${companies.length} companies: ${companies.slice(0, 5).join(', ')}${companies.length > 5 ? '...' : ''}
                     `;
-                    
-                    this.validateForm();
+                    document.getElementById('processBtn').disabled = false;
                 } catch (error) {
-                    console.error('Error processing file:', error);
-                    this.showStatus('error', `❌ Error reading file: ${error.message}`);
+                    this.showStatus('error', `❌ Error: ${error.message}`);
                 }
             }
 
             async parseFile(file) {
-                console.log('Parsing file:', file.name, file.type);
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
-                    
                     reader.onload = (e) => {
-                        console.log('File read successfully, processing data...');
                         try {
                             const data = new Uint8Array(e.target.result);
-                            console.log('Data length:', data.length);
-                            
                             const workbook = XLSX.read(data, { type: 'array' });
-                            console.log('Workbook created, sheets:', workbook.SheetNames);
-                            
                             const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                             const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-                            console.log('Raw JSON data:', jsonData);
-                            
-                            const companies = jsonData
-                                .slice(1) // Skip header
+                            const companies = jsonData.slice(1)
                                 .map(row => row[0])
                                 .filter(company => company && typeof company === 'string')
                                 .map(company => company.trim());
-                            
-                            console.log('Extracted companies:', companies);
                             resolve(companies);
                         } catch (error) {
-                            console.error('Error parsing file data:', error);
                             reject(error);
                         }
                     };
-                    
-                    reader.onerror = () => {
-                        console.error('FileReader error');
-                        reject(new Error('Failed to read file'));
-                    };
-                    
-                    console.log('Starting to read file...');
+                    reader.onerror = () => reject(new Error('Failed to read file'));
                     reader.readAsArrayBuffer(file);
                 });
             }
 
-            validateForm() {
-                const hasFile = this.companies.length > 0;
-                document.getElementById('processBtn').disabled = !hasFile;
-            }
-
             async startResearch() {
                 if (this.isProcessing) return;
-                
                 this.isProcessing = true;
                 this.results = [];
-                
                 document.getElementById('processBtn').disabled = true;
                 document.getElementById('resultsSection').style.display = 'none';
-                
-                this.showStatus('processing', `🔍 Starting research for ${this.companies.length} companies...`);
-                
-                const delay = parseInt(document.getElementById('requestDelay').value) * 1000;
-                
+                this.showStatus('processing', `🔍 Researching ${this.companies.length} companies...`);
+
                 for (let i = 0; i < this.companies.length; i++) {
                     const company = this.companies[i];
-                    
-                    this.updateProgress(i, this.companies.length, `Researching ${company}...`);
-                    
                     try {
                         const result = await this.researchCompany(company);
                         this.results.push(result);
-                        
+                        this.showStatus('processing', `✅ ${company} complete (${i + 1}/${this.companies.length})`);
                         if (i < this.companies.length - 1) {
-                            await new Promise(resolve => setTimeout(resolve, delay));
+                            await new Promise(resolve => setTimeout(resolve, 3000));
                         }
                     } catch (error) {
                         console.error(`Error researching ${company}:`, error);
                         this.results.push(this.createErrorResult(company, error.message));
                     }
                 }
-                
                 this.completeResearch();
             }
 
             async researchCompany(companyName) {
-                const systemPrompt = this.buildSystemPrompt();
-                const userPrompt = `Use at least 6 web searches to research this company: ${companyName}
+                const systemPrompt = `You are a competitive intelligence analyst. Research companies using web search.
 
-Every field must be based on actual web search results.
-Report exactly what you find from these searches.
+CRITICAL: You MUST use web search extensively. Search Glassdoor, LinkedIn, company websites, etc.
 
-CRITICAL: NEVER use -1, "Unknown", or leave any numeric fields blank. ALWAYS provide your best estimate.
+MANDATORY: NEVER use -1, "Unknown", or leave fields blank. ALWAYS estimate.
 
-EMPLOYEE GROWTH FOCUS: Calculate 3-year ANNUAL employee growth rate, not total growth. Use compound annual growth rate formula: ((Current Headcount / Headcount 3 Years Ago)^(1/3) - 1) * 100. Look for historical hiring data, press releases about team growth, LinkedIn historical employee counts.
+Return JSON with this EXACT structure:
+{
+  "company_name": "string",
+  "location": "US state only",
+  "company_type": "Public|Private|Startup|Nonprofit|Unknown",
+  "region": "East|Midwest|West|Southern|International|Unknown",
+  "total_headcount": integer,
+  "revenue": integer,
+  "glassdoor_rating": number,
+  "research_summary": "what you found and sources",
+  "sources_found": integer,
+  "data_quality": "High|Medium|Low"
+}`;
 
-IMPORTANT: If this is a large/well-known company, be EXTRA thorough in your searches.
+                const userPrompt = `Research this company: ${companyName}
 
-Large companies have MORE data available, not less - find it!`;
+Use multiple web searches. Find actual data. Estimate when needed.`;
 
-                // Use Netlify function (no API key needed - it's in environment variables)
-                const apiUrl = '/.netlify/functions/research';
-                
-                const response = await fetch(apiUrl, {
+                const response = await fetch('/.netlify/functions/research', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         messages: [
                             { role: 'system', content: systemPrompt },
@@ -796,125 +274,62 @@ Large companies have MORE data available, not less - find it!`;
 
                 if (!response.ok) {
                     const errorData = await response.json();
-                    throw new Error(`API request failed: ${response.status} - ${errorData.error || 'Unknown error'}`);
+                    throw new Error(`API failed: ${response.status} - ${errorData.error || 'Unknown'}`);
                 }
 
                 const data = await response.json();
+                console.log('API Response:', data);
                 return this.parseApiResponse(data, companyName);
-            }
-
-            buildSystemPrompt() {
-                const researchDepth = document.getElementById('researchDepth').value;
-                const searchInstructions = this.getSearchInstructions(researchDepth);
-                
-                return `You are a competitive intelligence analyst researching companies using web search. 
-
-CRITICAL INSTRUCTIONS:
-- You MUST use web search for every company research request
-- You have full access to web search - USE IT extensively  
-- ACTUALLY search Glassdoor,LinkedIn, company websites, etc.
-- Every data point must come from a real web search result
-
-${searchInstructions}
-
-CLASSIFICATION REQUIREMENTS:
-- company_type: Classify as Public, Private, Startup, Nonprofit, or Unknown
-- region: Map US headquarters location to East, Midwest, West, Southern, International, or Unknown
-- All other fields: Research and provide actual data with estimates when needed
-
-MANDATORY RULE: NEVER USE -1, "Unknown", or leave fields blank. ALWAYS provide your best estimate based on available information and context clues.
-
-Return findings as JSON with this EXACT structure:
-{
-  "company_name": "string",
-  "location": "US headquarters location - US State name only",
-  "company_type": "Public|Private|Startup|Nonprofit|Unknown",
-  "region": "East|Midwest|West|Southern|International|Unknown", 
-  "total_headcount": integer,
-  "us_headcount": integer,
-  "revenue": integer,
-  "employee_growth_3yr": number,
-  "median_manager_salary": integer,
-  "glassdoor_rating": number,
-  "culture_signals": number,
-  "learning_programs": number,
-  "awards_recognition": number,
-  "manager_coaching": number,
-  "research_summary": "what you actually found and from which sources",
-  "sources_found": integer,
-  "data_quality": "High|Medium|Low"
-}
-
-Return ONLY the JSON object.`;
-            }
-
-            getSearchInstructions(depth) {
-                const instructions = {
-                    'basic': 'SEARCH DEPTH: Use 3-4 focused web searches per company. Prioritize company website, LinkedIn, and one financial source.',
-                    'standard': 'SEARCH DEPTH: Use 6-8 comprehensive web searches per company. Cover company website, LinkedIn, Glassdoor, financial sources, and news.',
-                    'deep': 'SEARCH DEPTH: Use 10+ thorough web searches per company. Research extensively across all sources including historical data, press releases, and industry reports.'
-                };
-                return instructions[depth] || instructions['standard'];
             }
 
             parseApiResponse(apiData, companyName) {
                 try {
+                    if (!apiData.choices || !apiData.choices[0]) {
+                        throw new Error('Invalid API response structure');
+                    }
                     const content = apiData.choices[0].message.content.trim();
                     const jsonStart = content.indexOf('{');
                     const jsonEnd = content.lastIndexOf('}') + 1;
                     
-                    if (jsonStart !== -1 && jsonEnd > jsonStart) {
-                        const jsonStr = content.substring(jsonStart, jsonEnd);
-                        const data = JSON.parse(jsonStr);
-                        return this.validateAndCleanData(data, companyName);
-                    } else {
-                        throw new Error('No valid JSON found in response');
+                    if (jsonStart === -1 || jsonEnd <= jsonStart) {
+                        throw new Error('No valid JSON found');
                     }
+                    
+                    const jsonStr = content.substring(jsonStart, jsonEnd);
+                    const data = JSON.parse(jsonStr);
+                    return this.validateData(data, companyName);
                 } catch (error) {
-                    throw new Error(`Failed to parse API response: ${error.message}`);
+                    throw new Error(`Parse failed: ${error.message}`);
                 }
             }
 
-            validateAndCleanData(data, companyName) {
-                const cleanData = {
+            validateData(data, companyName) {
+                return {
                     company_name: data.company_name || companyName,
                     location: data.location || 'Unknown',
                     company_type: data.company_type || 'Unknown',
-                    region: this.mapLocationToRegion(data.location),
+                    region: this.mapRegion(data.location),
                     total_headcount: Math.max(1, parseInt(data.total_headcount) || 1),
-                    us_headcount: Math.max(1, parseInt(data.us_headcount) || 1),
                     revenue: Math.max(1, parseInt(data.revenue) || 1),
-                    employee_growth_3yr: parseFloat(data.employee_growth_3yr) || 0,
-                    median_manager_salary: Math.max(40, parseInt(data.median_manager_salary) || 80),
                     glassdoor_rating: Math.max(1, Math.min(5, parseFloat(data.glassdoor_rating) || 3)),
-                    culture_signals: Math.max(1, Math.min(5, parseInt(data.culture_signals) || 3)),
-                    learning_programs: Math.max(1, Math.min(5, parseInt(data.learning_programs) || 3)),
-                    awards_recognition: Math.max(1, Math.min(5, parseInt(data.awards_recognition) || 3)),
-                    manager_coaching: Math.max(1, Math.min(5, parseInt(data.manager_coaching) || 3)),
                     research_summary: data.research_summary || 'Basic research completed',
                     sources_found: Math.max(0, parseInt(data.sources_found) || 0),
                     data_quality: data.data_quality || 'Medium'
                 };
-                return cleanData;
             }
 
-            mapLocationToRegion(location) {
-                const regionMapping = {
-                    "East": ["CT", "DE", "ME", "MA", "NH", "NJ", "NY", "VT"],
-                    "Midwest": ["IL", "IN", "IA", "KS", "KY", "MI", "MN", "MO", "NE", "ND", "OH", "SD", "WI"],
-                    "West": ["AZ", "CA", "CO", "HI", "ID", "MT", "NV", "NM", "OR", "UT", "WA", "WY"],
-                    "Southern": ["AL", "AR", "DC", "FL", "GA", "LA", "MD", "MS", "NC", "OK", "SC", "TN", "TX", "VA", "WV"]
+            mapRegion(location) {
+                if (!location) return 'Unknown';
+                const regions = {
+                    'East': ['CT', 'DE', 'ME', 'MA', 'NH', 'NJ', 'NY', 'VT'],
+                    'Midwest': ['IL', 'IN', 'IA', 'KS', 'MI', 'MN', 'OH', 'WI'],
+                    'West': ['CA', 'WA', 'OR', 'CO', 'AZ', 'NV', 'UT'],
+                    'Southern': ['TX', 'FL', 'GA', 'NC', 'VA', 'TN', 'SC']
                 };
-
-                if (!location || location === 'Unknown') return 'Unknown';
-
-                for (const [region, states] of Object.entries(regionMapping)) {
-                    if (states.some(state => location.includes(state))) {
-                        return region;
-                    }
+                for (const [region, states] of Object.entries(regions)) {
+                    if (states.some(state => location.includes(state))) return region;
                 }
-
-                return location.toLowerCase().includes('international') ? 'International' : 'Unknown';
+                return 'Unknown';
             }
 
             createErrorResult(companyName, errorMsg) {
@@ -924,41 +339,26 @@ Return ONLY the JSON object.`;
                     company_type: 'Unknown',
                     region: 'Unknown',
                     total_headcount: 1,
-                    us_headcount: 1,
                     revenue: 1,
-                    employee_growth_3yr: 0,
-                    median_manager_salary: 80,
                     glassdoor_rating: 3,
-                    culture_signals: 3,
-                    learning_programs: 3,
-                    awards_recognition: 3,
-                    manager_coaching: 3,
-                    research_summary: `Research failed: ${errorMsg}`,
+                    research_summary: `Failed: ${errorMsg}`,
                     sources_found: 0,
                     data_quality: 'Low'
                 };
             }
 
-            updateProgress(current, total, statusText) {
-                const progress = ((current + 1) / total) * 100;
-                document.getElementById('progressFill').style.width = `${progress}%`;
-                document.getElementById('statusText').textContent = `${statusText} (${current + 1}/${total})`;
-            }
-
             completeResearch() {
                 this.isProcessing = false;
                 document.getElementById('processBtn').disabled = false;
-                
-                this.showStatus('success', '✅ Research completed successfully!');
-                
+                this.showStatus('success', '✅ Research completed!');
+
                 const csv = this.generateCSV();
                 const blob = new Blob([csv], { type: 'text/csv' });
                 const url = URL.createObjectURL(blob);
                 
-                const customFileName = document.getElementById('outputFileName').value.trim();
-                const baseFileName = customFileName || 'research_results';
+                const fileName = document.getElementById('outputFileName').value.trim() || 'research_results';
                 const dateStamp = new Date().toISOString().split('T')[0];
-                const finalFileName = `${baseFileName}_${dateStamp}.csv`;
+                const finalFileName = `${fileName}_${dateStamp}.csv`;
                 
                 const downloadBtn = document.getElementById('downloadBtn');
                 downloadBtn.href = url;
@@ -970,35 +370,21 @@ Return ONLY the JSON object.`;
 
             generateCSV() {
                 const selectedFields = this.getSelectedFields();
-                
                 const fieldMapping = {
                     'company_name': 'Company Name',
                     'company_type': 'Company Type',
                     'location': 'Location',
                     'region': 'Region',
                     'total_headcount': 'Total Headcount',
-                    'us_headcount': 'US Headcount',
                     'revenue': 'Revenue',
-                    'employee_growth_3yr': 'Employee Growth 3yr',
-                    'median_manager_salary': 'Median Manager Salary',
-                    'glassdoor_rating': 'Glassdoor Rating',
-                    'culture_signals': 'Culture Signals',
-                    'learning_programs': 'Learning Programs',
-                    'awards_recognition': 'Awards Recognition',
-                    'manager_coaching': 'Manager Coaching',
-                    'research_summary': 'Research Summary',
-                    'data_quality': 'Data Quality',
-                    'sources_found': 'Sources Found'
+                    'glassdoor_rating': 'Glassdoor Rating'
                 };
 
                 const headers = selectedFields.map(field => fieldMapping[field]);
                 const rows = this.results.map(result => {
                     return selectedFields.map(field => {
                         const value = result[field];
-                        if (field === 'research_summary' && typeof value === 'string') {
-                            return `"${value.replace(/"/g, '""')}"`;
-                        }
-                        return value;
+                        return typeof value === 'string' && value.includes(',') ? `"${value}"` : value;
                     });
                 });
 
@@ -1006,14 +392,7 @@ Return ONLY the JSON object.`;
             }
 
             getSelectedFields() {
-                const fieldIds = [
-                    'company_name', 'company_type', 'location', 'region',
-                    'total_headcount', 'us_headcount', 'revenue', 'employee_growth_3yr',
-                    'median_manager_salary', 'glassdoor_rating', 'culture_signals',
-                    'learning_programs', 'awards_recognition', 'manager_coaching',
-                    'research_summary', 'data_quality', 'sources_found'
-                ];
-
+                const fieldIds = ['company_name', 'company_type', 'location', 'region', 'total_headcount', 'revenue', 'glassdoor_rating'];
                 return fieldIds.filter(fieldId => {
                     const checkbox = document.getElementById(`include_${fieldId}`);
                     return checkbox && checkbox.checked;
@@ -1025,27 +404,15 @@ Return ONLY the JSON object.`;
                 status.className = `status ${type}`;
                 status.style.display = 'block';
                 document.getElementById('statusText').textContent = message;
-                
-                if (type !== 'processing') {
-                    document.getElementById('progressFill').style.width = '100%';
-                }
             }
         }
 
-        // Initialize the application
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOM loaded, initializing...');
-            
             if (typeof XLSX === 'undefined') {
-                console.error('XLSX library not loaded!');
-                alert('Error: XLSX library failed to load. Please refresh the page.');
+                alert('XLSX library failed to load. Please refresh.');
                 return;
-            } else {
-                console.log('XLSX library loaded successfully');
             }
-            
             window.companyResearcher = new CompanyResearcher();
-            console.log('CompanyResearcher initialized');
         });
     </script>
 </body>
