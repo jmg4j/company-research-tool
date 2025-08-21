@@ -71,7 +71,7 @@
                     <li>Click "Start Research" to automatically gather competitive intelligence</li>
                     <li>AI will search Glassdoor, LinkedIn, company websites and more for each company</li>
                     <li>Results download as a CSV file ready for analysis</li>
-                    <li><strong>Maximum 20 companies at a time</strong></li>
+                    <li><strong>Maximum 500 companies at a time</strong></li>
                 </ul>
             </div>
             
@@ -302,8 +302,8 @@
             async processFile(file) {
                 try {
                     const companies = await this.parseFile(file);
-                    if (companies.length > 20) {
-                        this.showStatus('error', '❌ Too many companies! Limit to 20.');
+                    if (companies.length > 500) {
+                        this.showStatus('error', '❌ Too many companies! Limit to 500.');
                         return;
                     }
                     this.companies = companies;
